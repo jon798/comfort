@@ -9,17 +9,17 @@ if TYPE_CHECKING:
     from homeassistant.config_entries import ConfigEntry
     from homeassistant.loader import Integration
 
-    from .api import IntegrationBlueprintApiClient
-    from .coordinator import BlueprintDataUpdateCoordinator
+    from .api import ComfortJAApiClient
+    from .coordinator import ComfortJADataUpdateCoordinator
 
 
-type IntegrationBlueprintConfigEntry = ConfigEntry[IntegrationBlueprintData]
+type ComfortJAConfigEntry = ConfigEntry[ComfortJAData]
 
 
 @dataclass
-class IntegrationBlueprintData:
+class ComfortJAData:
     """Data for the Blueprint integration."""
 
-    client: IntegrationBlueprintApiClient
-    coordinator: BlueprintDataUpdateCoordinator
+    client: ComfortJAApiClient
+    coordinator: ComfortJADataUpdateCoordinator
     integration: Integration

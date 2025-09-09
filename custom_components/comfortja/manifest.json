@@ -1,0 +1,12 @@
+{
+  "domain": "comfortja",
+  "name": "Comfort JA",
+  "codeowners": [
+    "@jon798"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/jon798/comfortja",
+  "iot_class": "clocal_push",
+  "issue_tracker": "https://github.com/jon798/comfortja/issues",
+  "version": "0.1.0"
+}
