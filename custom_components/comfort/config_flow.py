@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import voluptuous as vol
 from homeassistant import config_entries
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
+from homeassistant.const import CONF_PASSWORD, CONF_IPAddress, CONF_Port
 from homeassistant.helpers import selector
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from slugify import slugify
@@ -32,8 +32,9 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             try:
                 await self._test_credentials(
-                    username=user_input[CONF_USERNAME],
-                    password=user_input[CONF_PASSWORD],
+                    loginPIN=user_input[CONF_loginPIN],
+                    ComfortIPAddress=user_input[CONF_IPAddress],
+                    ComfortPort=user_input[CONF_Port],
                 )
             except ComfortApiClientAuthenticationError as exception:
                 LOGGER.warning(exception)
@@ -79,11 +80,10 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             errors=_errors,
         )
 
-    async def _test_credentials(self, username: str, password: str) -> None:
+    async def _test_credentials(self, loginPIN: str) -> None:
         """Validate credentials."""
         client = ComfortApiClient(
-            username=username,
-            password=password,
+            loginPIN=loginPIN,
             session=async_create_clientsession(self.hass),
         )
         await client.async_get_data()
