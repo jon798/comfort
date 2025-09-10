@@ -24,7 +24,7 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     VERSION = 1
 
-    async def async_step_systemsetup(
+    async def async_step_user(
         self,
         user_input: dict | None = None,
     ) -> config_entries.ConfigFlowResult:
@@ -35,24 +35,21 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 await self._system_details(
                     pin=user_input[CONF_PIN],
                 )
-            except ComfortApiClientError as exception:
-                LOGGER.exception(exception)
-                _errors["base"] = "unknown"
             else:
                 await self.async_set_unique_id(
                     ## Do NOT use this in production code
                     ## The unique_id should never be something that can change
                     ## https://developers.home-assistant.io/docs/config_entries_config_flow_handler#unique-ids
-                    unique_id=slugify(user_input[CONF_USERNAME])
+                    unique_id=slugify(user_input[CONF_PIN])
                 )
                 self._abort_if_unique_id_configured()
                 return self.async_create_entry(
-                    title=user_input[CONF_USERNAME],
+                    title=user_input[CONF_PIN],
                     data=user_input,
                 )
 
         return self.async_show_form(
-            step_id="systemsetup",
+            step_id="user",
             data_schema=vol.Schema(
                 {
                     vol.Required(
@@ -75,6 +72,4 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def _system_details(self, pin: str) -> None:
         """Get system details."""
-        pin = pin
         LOGGER.info("Comfort System Details", f"PIN: {pin}\n For now...")
-        return
