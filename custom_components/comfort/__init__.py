@@ -10,7 +10,7 @@ from __future__ import annotations
 from datetime import timedelta
 from typing import TYPE_CHECKING
 
-from homeassistant.const import CONF_USERNAME, CONF_PASSWORD, Platform
+from homeassistant.const import CONF_USERNAME, CONF_PASSWORD, CONF_PIN, Platform
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.loader import async_get_loaded_integration
 
@@ -49,6 +49,7 @@ async def async_setup_entry(
             password=entry.data[CONF_PASSWORD],
             session=async_get_clientsession(hass),
         ),
+        pin=entry.data[CONF_PIN]
         integration=async_get_loaded_integration(hass, entry.domain),
         coordinator=coordinator,
     )
