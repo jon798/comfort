@@ -72,5 +72,5 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def _system_details(self, pin: str) -> None:
         """Get system details."""
-        write
-        LOGGER.info("Comfort System Details", f"PIN: {pin}\n For now...")
+        print("Comfort System Details For now...",,, pin
+              )
