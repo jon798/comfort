@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import voluptuous as vol
 from homeassistant import config_entries
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
+from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, CONF_PIN
 from homeassistant.helpers import selector
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from slugify import slugify
@@ -35,6 +35,7 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     username=user_input[CONF_USERNAME],
                     password=user_input[CONF_PASSWORD],
                 )
+                await self._system(pin=user_input[CONF_PIN])
             except ComfortApiClientAuthenticationError as exception:
                 LOGGER.warning(exception)
                 _errors["base"] = "auth"
@@ -87,3 +88,7 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             session=async_create_clientsession(self.hass),
         )
         await client.async_get_data()
+
+    async def _system(self, pin: str) -> None:
+        """Validate system."""
+        print(pin)
