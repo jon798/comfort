@@ -17,7 +17,7 @@ type ComfortConfigEntry = ConfigEntry[ComfortData]
 
 
 @dataclass
-class ComfortJAData:
+class ComfortData:
     """Data for the Blueprint integration."""
 
     client: ComfortApiClient
