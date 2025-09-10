@@ -20,6 +20,5 @@ type ComfortConfigEntry = ConfigEntry[ComfortData]
 class ComfortData:
     """Data for the Comfort integration."""
 
-    pin: str
     coordinator: ComfortDataUpdateCoordinator
     integration: Integration
