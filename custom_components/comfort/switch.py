@@ -6,13 +6,13 @@ from typing import TYPE_CHECKING, Any
 
 from homeassistant.components.switch import SwitchEntity, SwitchEntityDescription
 
-from .entity import IntegrationBlueprintEntity
+from .entity import ComfortEntity
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-    from .coordinator import ComfortJADataUpdateCoordinator
+    from .coordinator import ComfortDataUpdateCoordinator
     from .data import ComfortConfigEntry
 
 ENTITY_DESCRIPTIONS = (
@@ -39,12 +39,12 @@ async def async_setup_entry(
     )
 
 
-class ComfortJASwitch(ComfortJAEntity, SwitchEntity):
+class ComfortSwitch(ComfortEntity, SwitchEntity):
     """integration_blueprint switch class."""
 
     def __init__(
         self,
-        coordinator: ComfortJADataUpdateCoordinator,
+        coordinator: ComfortDataUpdateCoordinator,
         entity_description: SwitchEntityDescription,
     ) -> None:
         """Initialize the switch class."""

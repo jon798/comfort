@@ -39,7 +39,7 @@ async def async_setup_entry(
     )
 
 
-class ComfortJASensor(ComfortEntity, SensorEntity):
+class ComfortSensor(ComfortEntity, SensorEntity):
     """Comfort Sensor class."""
 
     def __init__(
