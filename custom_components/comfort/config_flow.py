@@ -5,7 +5,7 @@ from tkinter import messagebox
 
 import voluptuous as vol
 from homeassistant import config_entries
-from homeassistant.const import CONF_PIN, CONF_USERNAME, CONF_COMFORT_IP
+from homeassistant.const import CONF_PIN, CONF_USERNAME
 from homeassistant.helpers import selector
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from slugify import slugify
