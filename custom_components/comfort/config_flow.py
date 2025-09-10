@@ -1,7 +1,6 @@
 """Adds config flow for Blueprint."""
 
 from __future__ import annotations
-from tkinter import messagebox
 
 import voluptuous as vol
 from homeassistant import config_entries
@@ -72,5 +71,4 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def _system_details(self, pin: str) -> None:
         """Get system details."""
-        print("Comfort System Details For now...",,, pin
-              )
+        print("Comfort System Details For now..." + pin + ".")
