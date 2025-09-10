@@ -13,11 +13,11 @@ if TYPE_CHECKING:
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
     from .coordinator import ComfortJADataUpdateCoordinator
-    from .data import ComfortJAConfigEntry
+    from .data import ComfortConfigEntry
 
 ENTITY_DESCRIPTIONS = (
     SwitchEntityDescription(
-        key="comfort ja",
+        key="comfort",
         name="Comfort Switch",
         icon="mdi:format-quote-close",
     ),
@@ -26,12 +26,12 @@ ENTITY_DESCRIPTIONS = (
 
 async def async_setup_entry(
     hass: HomeAssistant,  # noqa: ARG001 Unused function argument: `hass`
-    entry: ComfortJAConfigEntry,
+    entry: ComfortConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the switch platform."""
     async_add_entities(
-        ComfortJASwitch(
+        ComfortSwitch(
             coordinator=entry.runtime_data.coordinator,
             entity_description=entity_description,
         )

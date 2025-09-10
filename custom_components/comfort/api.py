@@ -9,18 +9,18 @@ import aiohttp
 import async_timeout
 
 
-class ComfortJAApiClientError(Exception):
+class ComfortApiClientError(Exception):
     """Exception to indicate a general API error."""
 
 
-class ComfortJAApiClientCommunicationError(
-    ComfortJAApiClientError,
+class ComfortApiClientCommunicationError(
+    ComfortApiClientError,
 ):
     """Exception to indicate a communication error."""
 
 
-class ComfortJAApiClientAuthenticationError(
-    ComfortJAApiClientError,
+class ComfortApiClientAuthenticationError(
+    ComfortApiClientError,
 ):
     """Exception to indicate an authentication error."""
 
@@ -29,7 +29,7 @@ def _verify_response_or_raise(response: aiohttp.ClientResponse) -> None:
     """Verify that the response is valid."""
     if response.status in (401, 403):
         msg = "Invalid credentials"
-        raise ComfortJAApiClientAuthenticationError(
+        raise ComfortApiClientAuthenticationError(
             msg,
         )
     response.raise_for_status()
@@ -86,16 +86,16 @@ class ComfortJAApiClient:
 
         except TimeoutError as exception:
             msg = f"Timeout error fetching information - {exception}"
-            raise ComfortJAApiClientCommunicationError(
+            raise ComfortApiClientCommunicationError(
                 msg,
             ) from exception
         except (aiohttp.ClientError, socket.gaierror) as exception:
             msg = f"Error fetching information - {exception}"
-            raise ComfortJAApiClientCommunicationError(
+            raise ComfortApiClientCommunicationError(
                 msg,
             ) from exception
         except Exception as exception:  # pylint: disable=broad-except
             msg = f"Something really wrong happened! - {exception}"
-            raise ComfortJAApiClientError(
+            raise ComfortApiClientError(
                 msg,
             ) from exception

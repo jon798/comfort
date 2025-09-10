@@ -16,12 +16,12 @@ if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-    from .coordinator import ComfortJADataUpdateCoordinator
-    from .data import ComfortJAConfigEntry
+    from .coordinator import ComfortDataUpdateCoordinator
+    from .data import ComfortConfigEntry
 
 ENTITY_DESCRIPTIONS = (
     BinarySensorEntityDescription(
-        key="Comfort JA",
+        key="Comfort",
         name="Comfort Binary Sensor",
         device_class=BinarySensorDeviceClass.CONNECTIVITY,
     ),
@@ -30,12 +30,12 @@ ENTITY_DESCRIPTIONS = (
 
 async def async_setup_entry(
     hass: HomeAssistant,  # noqa: ARG001 Unused function argument: `hass`
-    entry: ComfortJAConfigEntry,
+    entry: ComfortConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the binary_sensor platform."""
     async_add_entities(
-        ComfortJABinarySensor(
+        ComfortBinarySensor(
             coordinator=entry.runtime_data.coordinator,
             entity_description=entity_description,
         )
@@ -48,7 +48,7 @@ class ComfortJABinarySensor(ComfortJAEntity, BinarySensorEntity):
 
     def __init__(
         self,
-        coordinator: ComfortJAUpdateCoordinator,
+        coordinator: ComfortUpdateCoordinator,
         entity_description: BinarySensorEntityDescription,
     ) -> None:
         """Initialize the binary_sensor class."""

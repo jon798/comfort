@@ -6,15 +6,15 @@ from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import ATTRIBUTION
-from .coordinator import ComfortJADataUpdateCoordinator
+from .coordinator import ComfortDataUpdateCoordinator
 
 
-class ComfortJAEntity(CoordinatorEntity[ComfortJADataUpdateCoordinator]):
-    """ComfortJAEntity class."""
+class ComfortJAEntity(CoordinatorEntity[ComfortDataUpdateCoordinator]):
+    """ComfortEntity class."""
 
     _attr_attribution = ATTRIBUTION
 
-    def __init__(self, coordinator: ComfortJADataUpdateCoordinator) -> None:
+    def __init__(self, coordinator: ComfortDataUpdateCoordinator) -> None:
         """Initialize."""
         super().__init__(coordinator)
         self._attr_unique_id = coordinator.config_entry.entry_id

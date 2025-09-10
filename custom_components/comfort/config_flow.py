@@ -10,16 +10,16 @@ from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from slugify import slugify
 
 from .api import (
-    ComfortJAApiClient,
-    ComfortJAApiClientAuthenticationError,
-    ComfortJAApiClientCommunicationError,
-    ComfortJAApiClientError,
+    ComfortApiClient,
+    ComfortApiClientAuthenticationError,
+    ComfortApiClientCommunicationError,
+    ComfortApiClientError,
 )
 from .const import DOMAIN, LOGGER
 
 
 class ComfortJAFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
-    """Config flow for Comfrot JA Integration."""
+    """Config flow for Comfort Integration."""
 
     VERSION = 1
 
@@ -35,13 +35,13 @@ class ComfortJAFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     username=user_input[CONF_USERNAME],
                     password=user_input[CONF_PASSWORD],
                 )
-            except ComfortJAApiClientAuthenticationError as exception:
+            except ComfortApiClientAuthenticationError as exception:
                 LOGGER.warning(exception)
                 _errors["base"] = "auth"
-            except ComfortJAApiClientCommunicationError as exception:
+            except ComfortApiClientCommunicationError as exception:
                 LOGGER.error(exception)
                 _errors["base"] = "connection"
-            except ComfortJAApiClientError as exception:
+            except ComfortApiClientError as exception:
                 LOGGER.exception(exception)
                 _errors["base"] = "unknown"
             else:
@@ -81,7 +81,7 @@ class ComfortJAFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def _test_credentials(self, username: str, password: str) -> None:
         """Validate credentials."""
-        client = ComfortJAApiClient(
+        client = ComfortApiClient(
             username=username,
             password=password,
             session=async_create_clientsession(self.hass),

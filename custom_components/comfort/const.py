@@ -1,4 +1,4 @@
-"""Constants for comfortja integration."""
+"""Constants for comfort integration."""
 
 from logging import Logger, getLogger
 

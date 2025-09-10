@@ -8,25 +8,25 @@ from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .api import (
-    ComfortJAApiClientAuthenticationError,
-    ComfortJAApiClientError,
+    ComfortApiClientAuthenticationError,
+    ComfortApiClientError,
 )
 
 if TYPE_CHECKING:
-    from .data import ComfortJAConfigEntry
+    from .data import ComfortConfigEntry
 
 
 # https://developers.home-assistant.io/docs/integration_fetching_data#coordinated-single-api-poll-for-data-for-all-entities
 class ComfortJADataUpdateCoordinator(DataUpdateCoordinator):
     """Class to manage fetching data from the API."""
 
-    config_entry: ComfortJAConfigEntry
+    config_entry: ComfortConfigEntry
 
     async def _async_update_data(self) -> Any:
         """Update data via library."""
         try:
             return await self.config_entry.runtime_data.client.async_get_data()
-        except ComfortJAApiClientAuthenticationError as exception:
+        except ComfortApiClientAuthenticationError as exception:
             raise ConfigEntryAuthFailed(exception) from exception
-        except ComfortJAApiClientError as exception:
+        except ComfortApiClientError as exception:
             raise UpdateFailed(exception) from exception
