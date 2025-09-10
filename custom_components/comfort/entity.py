@@ -9,7 +9,7 @@ from .const import ATTRIBUTION
 from .coordinator import ComfortDataUpdateCoordinator
 
 
-class ComfortJAEntity(CoordinatorEntity[ComfortDataUpdateCoordinator]):
+class ComfortEntity(CoordinatorEntity[ComfortDataUpdateCoordinator]):
     """ComfortEntity class."""
 
     _attr_attribution = ATTRIBUTION
