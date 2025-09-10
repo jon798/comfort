@@ -18,7 +18,7 @@ from .api import (
 from .const import DOMAIN, LOGGER
 
 
-class ComfortJAFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
+class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     """Config flow for Comfort Integration."""
 
     VERSION = 1

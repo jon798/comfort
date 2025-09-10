@@ -35,7 +35,7 @@ def _verify_response_or_raise(response: aiohttp.ClientResponse) -> None:
     response.raise_for_status()
 
 
-class ComfortJAApiClient:
+class ComfortApiClient:
     """Sample API Client."""
 
     def __init__(
