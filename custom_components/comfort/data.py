@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from homeassistant.config_entries import ConfigEntry
     from homeassistant.loader import Integration
 
-    #   from .api import ComfortApiClient
+    from .api import ComfortApiClient
     from .coordinator import ComfortDataUpdateCoordinator
 
 
@@ -20,5 +20,6 @@ type ComfortConfigEntry = ConfigEntry[ComfortData]
 class ComfortData:
     """Data for the Comfort integration."""
 
+    client: ComfortApiClient
     coordinator: ComfortDataUpdateCoordinator
     integration: Integration
