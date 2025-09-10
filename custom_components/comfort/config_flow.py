@@ -24,7 +24,7 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     VERSION = 1
 
-    async def async_step_user(
+    async def async_step_systemsetup(
         self,
         user_input: dict | None = None,
     ) -> config_entries.ConfigFlowResult:
@@ -52,7 +52,7 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 )
 
         return self.async_show_form(
-            step_id="System Setup",
+            step_id="systemsetup",
             data_schema=vol.Schema(
                 {
                     vol.Required(
