@@ -32,9 +32,17 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         _errors = {}
         if user_input is not None:
             try:
-                await self._system_details(
+                await self._test_credentials(
+                    #  instance_name=user_input[CONF_USERNAME],
                     pin=user_input[CONF_PIN],
+                    username=user_input[CONF_USERNAME],
                 )
+            except ComfortApiClientAuthenticationError as exception:
+                LOGGER.warning(exception)
+                _errors["base"] = "auth"
+            except ComfortApiClientCommunicationError as exception:
+                LOGGER.error(exception)
+                _errors["base"] = "connection"
             except ComfortApiClientError as exception:
                 LOGGER.exception(exception)
                 _errors["base"] = "unknown"
@@ -52,7 +60,7 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 )
 
         return self.async_show_form(
-            step_id="System Setup",
+            step_id="PIN",
             data_schema=vol.Schema(
                 {
                     vol.Required(
@@ -73,8 +81,11 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             errors=_errors,
         )
 
-    async def _system_details(self, pin: str) -> None:
-        """Get system details."""
-        pin = pin
-        messagebox.showinfo("System Details", f"PIN: {pin}\n For now...")
-        return
+    async def _test_credentials(self, username: str, pin: str) -> None:
+        """Validate credentials."""
+        client = ComfortApiClient(
+            pin=pin,
+            username=username,
+            session=async_create_clientsession(self.hass),
+        )
+        await client.async_get_data()

@@ -40,11 +40,13 @@ class ComfortApiClient:
 
     def __init__(
         self,
-        loginPIN: str,
+        pin: str,
+        username: str,
         session: aiohttp.ClientSession,
     ) -> None:
         """Sample API Client."""
-        self._loginPIN = loginPIN
+        self._pin = pin
+        self._username = username
         self._session = session
 
     async def async_get_data(self) -> Any:
