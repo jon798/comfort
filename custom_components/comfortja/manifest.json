@@ -1,12 +1,12 @@
 {
-  "domain": "comfortja",
-  "name": "Comfort JA",
+  "domain": "comfort",
+  "name": "Comfort basic integration",
   "codeowners": [
     "@jon798"
   ],
   "config_flow": true,
-  "documentation": "https://github.com/jon798/comfortja",
+  "documentation": "https://github.com/jon798/comfort",
   "iot_class": "clocal_push",
-  "issue_tracker": "https://github.com/jon798/comfortja/issues",
+  "issue_tracker": "https://github.com/jon798/comfort/issues",
   "version": "0.1.0"
 }
