@@ -40,12 +40,12 @@ class ComfortApiClient:
 
     def __init__(
         self,
-        pin: str,
+        password: str,
         username: str,
         session: aiohttp.ClientSession,
     ) -> None:
         """Sample API Client."""
-        self._pin = pin
+        self._password = password
         self._username = username
         self._session = session
 
