@@ -49,7 +49,7 @@ async def async_setup_entry(
             password=entry.data[CONF_PASSWORD],
             session=async_get_clientsession(hass),
         ),
-        pin=entry.data[CONF_PIN]
+        pin=entry.data[CONF_PIN],
         integration=async_get_loaded_integration(hass, entry.domain),
         coordinator=coordinator,
     )
