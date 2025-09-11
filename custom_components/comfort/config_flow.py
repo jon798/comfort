@@ -8,7 +8,7 @@ from homeassistant.const import (
     CONF_PASSWORD,
     CONF_USERNAME,
     CONF_PIN,
-    CONF_IPADDRESS,
+    CONF_COMFORTIP,
     CONF_PORT,
 )
 from homeassistant.helpers import selector
@@ -43,7 +43,7 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 )
                 await self._system(
                     pin=user_input[CONF_PIN],
-                    ip=user_input[CONF_IPADDRESS],
+                    ip=user_input[CONF_COMFORTIP],
                     port=user_input[CONF_PORT],
                 )
             except ComfortApiClientAuthenticationError as exception:
@@ -94,8 +94,8 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                         ),
                     ),
                     vol.Required(
-                        CONF_IPADDRESS,
-                        default=(user_input or {}).get(CONF_PIN, vol.UNDEFINED),
+                        CONF_COMFORTIP,
+                        default=(user_input or {}).get(CONF_COMFORTIP, vol.UNDEFINED),
                     ): selector.TextSelector(
                         selector.TextSelectorConfig(
                             type=selector.TextSelectorType.TEXT,
@@ -103,7 +103,7 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     ),
                     vol.Required(
                         CONF_PORT,
-                        default=(user_input or {}).get(CONF_PIN, vol.UNDEFINED),
+                        default=(user_input or {}).get(CONF_PORT, vol.UNDEFINED),
                     ): selector.TextSelector(
                         selector.TextSelectorConfig(
                             type=selector.TextSelectorType.NUMBER,
