@@ -5,6 +5,13 @@ from __future__ import annotations
 import socket
 from typing import Any
 
+import select
+import time
+import datetime
+import threading
+from datetime import timedelta
+
+
 import aiohttp
 import async_timeout
 
@@ -40,14 +47,19 @@ class ComfortApiClient:
 
     def __init__(
         self,
-        username: str,
-        password: str,
-        session: aiohttp.ClientSession,
+        pin: str,
+        ip: str,
+        port: int,
+        #session: aiohttp.ClientSession,
     ) -> None:
-        """Sample API Client."""
-        self._username = username
-        self._password = password
-        self._session = session
+
+
+
+
+  #      """Sample API Client."""
+  #      self._username = username
+  #      self._password = password
+  #      self._session = session
 
     async def async_get_data(self) -> Any:
         """Get data from the API."""

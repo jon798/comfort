@@ -26,9 +26,11 @@ class ComfortDataUpdateCoordinator(DataUpdateCoordinator):
 
     async def _async_update_data(self) -> Any:
         """Update data via library."""
-        try:
-            return await self.config_entry.runtime_data.async_get_data()
-        except ComfortApiClientAuthenticationError as exception:
-            raise ConfigEntryAuthFailed(exception) from exception
-        except ComfortApiClientError as exception:
-            raise UpdateFailed(exception) from exception
+
+    #  try:
+    #      return await self.config_entry.runtime_data.client.async_get_data()
+    #  except ComfortApiClientAuthenticationError as exception:
+    #      raise ConfigEntryAuthFailed(exception) from exception
+    #  except ComfortApiClientError as exception:
+    #      raise UpdateFailed(exception) from exception
+    pass
