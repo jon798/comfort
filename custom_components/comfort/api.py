@@ -66,9 +66,9 @@ class ComfortApiClient:
         try:
             self.comfortsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             print("connecting to " + ip + " " + str(math.floor(port)))
-            self.comfortsock.connect((ip, math.floor(port)))
+            # self.comfortsock.connect((ip, math.floor(port)))
             self.comfortsock.settimeout(timeout.seconds)
-            self.login()
+            # self.login()
             print("Got to the line after login....")
 
         except socket.error as v:
