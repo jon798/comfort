@@ -84,10 +84,10 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     ),
                     vol.Required(
                         COMFORT_PORT,
-                        default=(8083),
+                        default=(1001),
                     ): selector.NumberSelector(
                         selector.NumberSelectorConfig(
-                            min=1025,
+                            min=1,
                             max=65535,
                             mode=selector.NumberSelectorMode.BOX,
                         ),
