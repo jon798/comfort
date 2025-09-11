@@ -86,14 +86,14 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             errors=_errors,
         )
 
-    async def _test_credentials(self, username: str, password: str) -> None:
-        """Validate credentials."""
-        client = ComfortApiClient(
-            username=username,
-            password=password,
-            session=async_create_clientsession(self.hass),
-        )
-        await client.async_get_data()
+    #  async def _test_credentials(self, username: str, password: str) -> None:
+    #     """Validate credentials."""
+    #     client = ComfortApiClient(
+    #          username=username,
+    #          password=password,
+    #          session=async_create_clientsession(self.hass),
+    #      )
+    #      await client.async_get_data()
 
     async def _system(self, pin: str, ip: str, port: int) -> None:
         """Validate system."""

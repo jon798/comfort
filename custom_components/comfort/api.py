@@ -50,16 +50,17 @@ class ComfortApiClient:
         pin: str,
         ip: str,
         port: int,
-        #session: aiohttp.ClientSession,
+        # session: aiohttp.ClientSession,
     ) -> None:
+        """Sample API Client."""
+        self._pin = pin
+        self._ip = ip
+        self._port = port
 
-
-
-
-  #      """Sample API Client."""
-  #      self._username = username
-  #      self._password = password
-  #      self._session = session
+    #      """Sample API Client."""
+    #      self._username = username
+    #      self._password = password
+    #      self._session = session
 
     async def async_get_data(self) -> Any:
         """Get data from the API."""
