@@ -7,9 +7,6 @@ from homeassistant import config_entries
 from homeassistant.const import (
     CONF_PASSWORD,
     CONF_USERNAME,
-    CONF_PIN,
-    CONF_COMFORTIP,
-    CONF_PORT,
 )
 from homeassistant.helpers import selector
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
@@ -21,7 +18,7 @@ from .api import (
     ComfortApiClientCommunicationError,
     ComfortApiClientError,
 )
-from .const import DOMAIN, LOGGER
+from .const import DOMAIN, LOGGER, COMFORT_IP, COMFORT_PORT, COMFORT_PIN
 
 
 class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
@@ -42,9 +39,9 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     password=user_input[CONF_PASSWORD],
                 )
                 await self._system(
-                    pin=user_input[CONF_PIN],
-                    ip=user_input[CONF_COMFORTIP],
-                    port=user_input[CONF_PORT],
+                    pin=user_input[COMFORT_PIN],
+                    ip=user_input[COMFORT_IP],
+                    port=user_input[COMFORT_PORT],
                 )
             except ComfortApiClientAuthenticationError as exception:
                 LOGGER.warning(exception)
@@ -86,24 +83,24 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                         ),
                     ),
                     vol.Required(
-                        CONF_PIN,
-                        default=(user_input or {}).get(CONF_PIN, vol.UNDEFINED),
+                        COMFORT_PIN,
+                        default=(user_input or {}).get(COMFORT_PIN, vol.UNDEFINED),
                     ): selector.TextSelector(
                         selector.TextSelectorConfig(
                             type=selector.TextSelectorType.TEXT,
                         ),
                     ),
                     vol.Required(
-                        CONF_COMFORTIP,
-                        default=(user_input or {}).get(CONF_COMFORTIP, vol.UNDEFINED),
+                        COMFORT_IP,
+                        default=(user_input or {}).get(COMFORT_IP, vol.UNDEFINED),
                     ): selector.TextSelector(
                         selector.TextSelectorConfig(
                             type=selector.TextSelectorType.TEXT,
                         ),
                     ),
                     vol.Required(
-                        CONF_PORT,
-                        default=(user_input or {}).get(CONF_PORT, vol.UNDEFINED),
+                        COMFORT_PORT,
+                        default=(user_input or {}).get(COMFORT_PORT, vol.UNDEFINED),
                     ): selector.TextSelector(
                         selector.TextSelectorConfig(
                             type=selector.TextSelectorType.NUMBER,
