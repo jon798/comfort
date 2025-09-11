@@ -4,7 +4,13 @@ from __future__ import annotations
 
 import voluptuous as vol
 from homeassistant import config_entries
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, CONF_PIN
+from homeassistant.const import (
+    CONF_PASSWORD,
+    CONF_USERNAME,
+    CONF_PIN,
+    CONF_IP,
+    CONF_PORT,
+)
 from homeassistant.helpers import selector
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from slugify import slugify
@@ -35,7 +41,11 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     username=user_input[CONF_USERNAME],
                     password=user_input[CONF_PASSWORD],
                 )
-                await self._system(pin=user_input[CONF_PIN])
+                await self._system(
+                    pin=user_input[CONF_PIN],
+                    ip=user_input[CONF_IP],
+                    port=user_input[CONF_PORT],
+                )
             except ComfortApiClientAuthenticationError as exception:
                 LOGGER.warning(exception)
                 _errors["base"] = "auth"
@@ -83,6 +93,22 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                             type=selector.TextSelectorType.TEXT,
                         ),
                     ),
+                    vol.Required(
+                        CONF_IP,
+                        default=(user_input or {}).get(CONF_PIN, vol.UNDEFINED),
+                    ): selector.TextSelector(
+                        selector.TextSelectorConfig(
+                            type=selector.TextSelectorType.TEXT,
+                        ),
+                    ),
+                    vol.Required(
+                        CONF_PORT,
+                        default=(user_input or {}).get(CONF_PIN, vol.UNDEFINED),
+                    ): selector.TextSelector(
+                        selector.TextSelectorConfig(
+                            type=selector.TextSelectorType.NUMBER,
+                        ),
+                    ),
                 },
             ),
             errors=_errors,
@@ -97,6 +123,8 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         )
         await client.async_get_data()
 
-    async def _system(self, pin: str) -> None:
+    async def _system(self, pin: str, ip: str, port: int) -> None:
         """Validate system."""
         print(pin)
+        print(ip)
+        print(port)

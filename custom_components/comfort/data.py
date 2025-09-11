@@ -21,6 +21,8 @@ class ComfortData:
     """Data for the Comfort integration."""
 
     pin: str
+    ip: str
+    port: int
     client: ComfortApiClient
     coordinator: ComfortDataUpdateCoordinator
     integration: Integration
