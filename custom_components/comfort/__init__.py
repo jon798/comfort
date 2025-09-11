@@ -14,7 +14,7 @@ from homeassistant.const import (
     CONF_USERNAME,
     CONF_PASSWORD,
     CONF_PIN,
-    CONF_IP,
+    CONF_IPADDRESS,
     CONF_PORT,
     Platform,
 )
@@ -57,7 +57,7 @@ async def async_setup_entry(
             session=async_get_clientsession(hass),
         ),
         pin=entry.data[CONF_PIN],
-        ip=entry.data[CONF_IP],
+        ip=entry.data[CONF_IPADDRESS],
         port=entry.data[CONF_PORT],
         integration=async_get_loaded_integration(hass, entry.domain),
         coordinator=coordinator,
