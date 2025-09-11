@@ -76,7 +76,7 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                         default=(8083),
                     ): selector.NumberSelector(
                         selector.NumberSelectorConfig(
-                            step=1,
+                            step=selector.NumberSelectorStep.INT,
                         ),
                     ),
                 },
