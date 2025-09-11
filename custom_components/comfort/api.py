@@ -6,6 +6,7 @@ import socket
 from typing import Any
 
 import select
+import math
 import time
 import datetime
 import threading
@@ -66,7 +67,7 @@ class ComfortApiClient:
             try:
                 self.comfortsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 print("connecting to " + ip + " " + str(port))
-                self.comfortsock.connect((ip, port))
+                self.comfortsock.connect((ip, math.floor(port)))
                 self.comfortsock.settimeout(timeout.seconds)
                 self.login()
                 print("Got to the line after login....")
