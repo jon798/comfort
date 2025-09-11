@@ -98,7 +98,7 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                         default=(30),
                     ): selector.NumberSelector(
                         selector.NumberSelectorConfig(
-                            step=1
+                            step=1,
                             min=10,
                             max=240,
                             mode=selector.NumberSelectorMode.BOX,
@@ -109,7 +109,7 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                         default=(5),
                     ): selector.NumberSelector(
                         selector.NumberSelectorConfig(
-                            step=1
+                            step=1,
                             min=1,
                             max=240,
                             mode=selector.NumberSelectorMode.BOX,
