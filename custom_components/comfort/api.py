@@ -63,20 +63,20 @@ class ComfortApiClient:
         self._port = port
         self.timeout = timeout
         self.retry = retry
-        while True:
-            try:
-                self.comfortsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                print("connecting to " + ip + " " + str(port))
-                self.comfortsock.connect((ip, math.floor(port)))
-                self.comfortsock.settimeout(timeout.seconds)
-                self.login()
-                print("Got to the line after login....")
-            except socket.error as v:
-                # errorcode = v[0]
-                print("socket error " + str(v))
-                # raise
-                print("lost connection to comfort, reconnecting...")
-                time.sleep(retry.seconds)
+        try:
+            self.comfortsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            print("connecting to " + ip + " " + str(math.floor(port)))
+            self.comfortsock.connect((ip, math.floor(port)))
+            self.comfortsock.settimeout(timeout.seconds)
+            self.login()
+            print("Got to the line after login....")
+
+        except socket.error as v:
+            # errorcode = v[0]
+            print("socket error " + str(v))
+            # raise
+            print("lost connection to comfort, reconnecting...")
+            time.sleep(retry.seconds)
 
     async def async_get_data(self) -> Any:
         """Get data from the API."""
