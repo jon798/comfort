@@ -102,6 +102,16 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                             mode=selector.NumberSelectorMode.BOX,
                         ),
                     ),
+                    vol.Required(
+                        COMFORT_RETRY,
+                        default=(5),
+                    ): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            min=1,
+                            max=240,
+                            mode=selector.NumberSelectorMode.BOX,
+                        ),
+                    ),
                 },
             ),
             errors=_errors,
