@@ -78,6 +78,7 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                         selector.NumberSelectorConfig(
                             min=1025,
                             max=65535,
+                            mode=selector.NumberSelectorMode.BOX,
                         ),
                     ),
                 },
