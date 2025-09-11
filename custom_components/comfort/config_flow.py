@@ -74,9 +74,9 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Required(
                         COMFORT_PORT,
                         default=(8083),
-                    ): selector.TextSelector(
-                        selector.TextSelectorConfig(
-                            type=selector.TextSelectorType.NUMBER,
+                    ): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            step=1,
                         ),
                     ),
                 },
