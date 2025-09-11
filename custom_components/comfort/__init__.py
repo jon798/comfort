@@ -54,7 +54,14 @@ async def async_setup_entry(
         hass=hass,
         logger=LOGGER,
         name=DOMAIN,
-        update_interval=timedelta(hours=1),
+        config_entry=entry,
+        my_api=ComfortApiClient(
+            pin=entry.data[COMFORT_PIN],
+            ip=entry.data[COMFORT_IP],
+            port=entry.data[COMFORT_PORT],
+            timeout=timedelta(seconds=entry.data[COMFORT_TIMEOUT]),
+            retry=entry.data[COMFORT_RETRY],
+        ),
     )
     entry.runtime_data = ComfortData(
         pin=entry.data[COMFORT_PIN],

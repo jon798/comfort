@@ -8,6 +8,7 @@ from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .api import (
+    ComfortApiClient,
     ComfortApiClientAuthenticationError,
     ComfortApiClientError,
 )
@@ -23,6 +24,18 @@ class ComfortDataUpdateCoordinator(DataUpdateCoordinator):
     """Class to manage fetching data from the API."""
 
     config_entry: ComfortConfigEntry
+
+    def __init__(self, hass, name, logger, config_entry, my_api) -> None:
+        """Initialize."""
+        super().__init__(
+            hass,
+            _LOGGER,
+            config_entry=config_entry,
+            name="My thing in here",
+            update_interval=None,
+            always_update=True,
+        )
+        self.my_api = ComfortApiClient
 
     async def _async_update_data(self) -> Any:
         """Update data via library."""
