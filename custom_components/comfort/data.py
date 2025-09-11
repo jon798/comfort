@@ -6,8 +6,8 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from homeassistant.config_entries import ConfigEntry
-    from homeassistant.loader import Integration
+    from homeassistant.config_entries import ConfigEntry  # ignore
+    from homeassistant.loader import Integration  # ignore
 
     from .api import ComfortApiClient
     from .coordinator import ComfortDataUpdateCoordinator
@@ -23,6 +23,8 @@ class ComfortData:
     pin: str
     ip: str
     port: int
+    timeout: int
+    retry: int
     # client: ComfortApiClient
     coordinator: ComfortDataUpdateCoordinator
     integration: Integration

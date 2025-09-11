@@ -45,22 +45,36 @@ def _verify_response_or_raise(response: aiohttp.ClientResponse) -> None:
 class ComfortApiClient:
     """Sample API Client."""
 
+    def login(self):
+        self.comfortsock.sendall(("\x03LI" + self._pin + "\r").encode())
+
     def __init__(
         self,
         pin: str,
         ip: str,
         port: int,
-        # session: aiohttp.ClientSession,
+        timeout: timedelta,
+        retry: timedelta,
     ) -> None:
-        """Sample API Client."""
+        """Initialize."""
         self._pin = pin
         self._ip = ip
         self._port = port
-
-    #      """Sample API Client."""
-    #      self._username = username
-    #      self._password = password
-    #      self._session = session
+        self.timeout = timeout
+        self.retry = retry
+        while True:
+            try:
+                self.comfortsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                print("connecting to " + ip + " " + str(port))
+                self.comfortsock.connect((ip, port))
+                self.comfortsock.settimeout(timeout.seconds)
+                self.login()
+            except socket.error as v:
+                # errorcode = v[0]
+                print("socket error " + str(v))
+                # raise
+                print("lost connection to comfort, reconnecting...")
+                time.sleep(retry.seconds)
 
     async def async_get_data(self) -> Any:
         """Get data from the API."""
@@ -88,14 +102,15 @@ class ComfortApiClient:
         """Get information from the API."""
         try:
             async with async_timeout.timeout(10):
-                response = await self._session.request(
-                    method=method,
-                    url=url,
-                    headers=headers,
-                    json=data,
-                )
-                _verify_response_or_raise(response)
-                return await response.json()
+                #    response = await self._session.request(
+                #        method=method,
+                #        url=url,
+                #        headers=headers,
+                #        json=data,
+                #    )
+                pass
+            # _verify_response_or_raise(response)
+            return  # await response.json()
 
         except TimeoutError as exception:
             msg = f"Timeout error fetching information - {exception}"

@@ -11,15 +11,24 @@ from datetime import timedelta
 from typing import TYPE_CHECKING
 
 from homeassistant.const import (
-    CONF_USERNAME,
     CONF_PASSWORD,
+    CONF_USERNAME,
     Platform,
 )
+
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.loader import async_get_loaded_integration
 
 from .api import ComfortApiClient
-from .const import DOMAIN, LOGGER, COMFORT_IP, COMFORT_PORT, COMFORT_PIN
+from .const import (
+    COMFORT_IP,
+    COMFORT_PIN,
+    COMFORT_PORT,
+    COMFORT_TIMEOUT,
+    COMFORT_RETRY,
+    DOMAIN,
+    LOGGER,
+)
 from .coordinator import ComfortDataUpdateCoordinator
 from .data import ComfortData
 
@@ -51,6 +60,8 @@ async def async_setup_entry(
         pin=entry.data[COMFORT_PIN],
         ip=entry.data[COMFORT_IP],
         port=entry.data[COMFORT_PORT],
+        timeout=entry.data[COMFORT_TIMEOUT],
+        retry=entry.data[COMFORT_RETRY],
         integration=async_get_loaded_integration(hass, entry.domain),
         coordinator=coordinator,
     )

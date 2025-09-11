@@ -48,7 +48,7 @@ class ComfortBinarySensor(ComfortEntity, BinarySensorEntity):
 
     def __init__(
         self,
-        coordinator: ComfortUpdateCoordinator,
+        coordinator: ComfortDataUpdateCoordinator,
         entity_description: BinarySensorEntityDescription,
     ) -> None:
         """Initialize the binary_sensor class."""

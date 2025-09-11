@@ -1,6 +1,7 @@
 """Adds config flow for Comfort."""
 
 from __future__ import annotations
+from datetime import timedelta
 
 import voluptuous as vol
 from homeassistant import config_entries
@@ -18,7 +19,15 @@ from .api import (
     ComfortApiClientCommunicationError,
     ComfortApiClientError,
 )
-from .const import DOMAIN, LOGGER, COMFORT_IP, COMFORT_PORT, COMFORT_PIN
+from .const import (
+    DOMAIN,
+    LOGGER,
+    COMFORT_IP,
+    COMFORT_PORT,
+    COMFORT_PIN,
+    COMFORT_TIMEOUT,
+    COMFORT_RETRY,
+)
 
 
 class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
@@ -37,6 +46,8 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 pin=user_input[COMFORT_PIN],
                 ip=user_input[COMFORT_IP],
                 port=user_input[COMFORT_PORT],
+                timeout=user_input[COMFORT_TIMEOUT],
+                retry=user_input[COMFORT_RETRY],
             )
 
             await self.async_set_unique_id(
@@ -81,6 +92,16 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                             mode=selector.NumberSelectorMode.BOX,
                         ),
                     ),
+                    vol.Required(
+                        COMFORT_TIMEOUT,
+                        default=(30),
+                    ): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            min=10,
+                            max=240,
+                            mode=selector.NumberSelectorMode.BOX,
+                        ),
+                    ),
                 },
             ),
             errors=_errors,
@@ -95,8 +116,12 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     #      )
     #      await client.async_get_data()
 
-    async def _system(self, pin: str, ip: str, port: int) -> None:
+    async def _system(
+        self, pin: str, ip: str, port: int, timeout: timedelta, retry: timedelta
+    ) -> None:
         """Validate system."""
         print(pin)
         print(ip)
         print(port)
+        print(timeout.seconds)
+        print(retry.seconds)

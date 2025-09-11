@@ -43,9 +43,7 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             except ComfortApiClientCommunicationError as exception:
                 LOGGER.error(exception)
                 _errors["base"] = "connection"
-            except ComfortApiClientError as exception:
-                LOGGER.exception(exception)
-                _errors["base"] = "unknown"
+
             else:
                 await self.async_set_unique_id(
                     ## Do NOT use this in production code
