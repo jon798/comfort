@@ -26,7 +26,7 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     VERSION = 1
 
-    async def async_step_user(
+    async def async_step_init(
         self,
         user_input: dict | None = None,
     ) -> config_entries.ConfigFlowResult:
@@ -34,10 +34,6 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         _errors = {}
         if user_input is not None:
             try:
-                await self._test_credentials(
-                    username=user_input[CONF_USERNAME],
-                    password=user_input[CONF_PASSWORD],
-                )
                 await self._system(
                     pin=user_input[COMFORT_PIN],
                     ip=user_input[COMFORT_IP],
@@ -61,27 +57,14 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 )
                 self._abort_if_unique_id_configured()
                 return self.async_create_entry(
-                    title=user_input[CONF_USERNAME],
+                    title="Comfort Alarm",
                     data=user_input,
                 )
 
         return self.async_show_form(
-            step_id="user",
+            step_id="init",
             data_schema=vol.Schema(
                 {
-                    vol.Required(
-                        CONF_USERNAME,
-                        default=(user_input or {}).get(CONF_USERNAME, vol.UNDEFINED),
-                    ): selector.TextSelector(
-                        selector.TextSelectorConfig(
-                            type=selector.TextSelectorType.TEXT,
-                        ),
-                    ),
-                    vol.Required(CONF_PASSWORD): selector.TextSelector(
-                        selector.TextSelectorConfig(
-                            type=selector.TextSelectorType.PASSWORD,
-                        ),
-                    ),
                     vol.Required(
                         COMFORT_PIN,
                         default=(user_input or {}).get(COMFORT_PIN, vol.UNDEFINED),
