@@ -127,11 +127,11 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     #      await client.async_get_data()
 
     async def _system(
-        self, pin: str, ip: str, port: int, timeout: timedelta, retry: timedelta
+        self, pin: str, ip: str, port: int, timeout: int, retry: int
     ) -> None:
         """Validate system."""
         print(pin)
         print(ip)
         print(port)
-        print(timeout.seconds)
-        print(retry.seconds)
+        print(timeout)
+        print(retry)
