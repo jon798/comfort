@@ -48,11 +48,6 @@ async def async_setup_entry(
         update_interval=timedelta(hours=1),
     )
     entry.runtime_data = ComfortData(
-        client=ComfortApiClient(
-            username=entry.data[CONF_USERNAME],
-            password=entry.data[CONF_PASSWORD],
-            session=async_get_clientsession(hass),
-        ),
         pin=entry.data[COMFORT_PIN],
         ip=entry.data[COMFORT_IP],
         port=entry.data[COMFORT_PORT],

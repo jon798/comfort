@@ -23,6 +23,6 @@ class ComfortData:
     pin: str
     ip: str
     port: int
-    client: ComfortApiClient
+    # client: ComfortApiClient
     coordinator: ComfortDataUpdateCoordinator
     integration: Integration

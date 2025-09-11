@@ -26,43 +26,33 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     VERSION = 1
 
-    async def async_step_init(
+    async def async_step_user(
         self,
         user_input: dict | None = None,
     ) -> config_entries.ConfigFlowResult:
         """Handle a flow initialized by the user."""
         _errors = {}
         if user_input is not None:
-            try:
-                await self._system(
-                    pin=user_input[COMFORT_PIN],
-                    ip=user_input[COMFORT_IP],
-                    port=user_input[COMFORT_PORT],
-                )
-            except ComfortApiClientAuthenticationError as exception:
-                LOGGER.warning(exception)
-                _errors["base"] = "auth"
-            except ComfortApiClientCommunicationError as exception:
-                LOGGER.error(exception)
-                _errors["base"] = "connection"
-            except ComfortApiClientError as exception:
-                LOGGER.exception(exception)
-                _errors["base"] = "unknown"
-            else:
-                await self.async_set_unique_id(
-                    ## Do NOT use this in production code
-                    ## The unique_id should never be something that can change
-                    ## https://developers.home-assistant.io/docs/config_entries_config_flow_handler#unique-ids
-                    unique_id=slugify(user_input[COMFORT_IP])
-                )
-                self._abort_if_unique_id_configured()
-                return self.async_create_entry(
-                    title="Comfort Alarm",
-                    data=user_input,
-                )
+            await self._system(
+                pin=user_input[COMFORT_PIN],
+                ip=user_input[COMFORT_IP],
+                port=user_input[COMFORT_PORT],
+            )
+
+            await self.async_set_unique_id(
+                ## Do NOT use this in production code
+                ## The unique_id should never be something that can change
+                ## https://developers.home-assistant.io/docs/config_entries_config_flow_handler#unique-ids
+                unique_id=slugify(user_input[COMFORT_IP])
+            )
+            self._abort_if_unique_id_configured()
+            return self.async_create_entry(
+                title="Comfort Alarm",
+                data=user_input,
+            )
 
         return self.async_show_form(
-            step_id="init",
+            step_id="user",
             data_schema=vol.Schema(
                 {
                     vol.Required(
@@ -83,7 +73,7 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     ),
                     vol.Required(
                         COMFORT_PORT,
-                        default=(user_input or {}).get(COMFORT_PORT, vol.UNDEFINED),
+                        default=(8083),
                     ): selector.TextSelector(
                         selector.TextSelectorConfig(
                             type=selector.TextSelectorType.NUMBER,
