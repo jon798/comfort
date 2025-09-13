@@ -21,7 +21,7 @@ DATA_SCHEMA = vol.Schema(
     {
         vol.Required(
             "Login PIN",
-            default=("1234"),
+            default=("6014"),
         ): selector.TextSelector(
             selector.TextSelectorConfig(
                 type=selector.TextSelectorType.TEXT,
@@ -29,7 +29,7 @@ DATA_SCHEMA = vol.Schema(
         ),
         vol.Required(
             "Comfort IP Address",
-            default=(),
+            default=("192.168.4.205"),
         ): selector.TextSelector(
             selector.TextSelectorConfig(
                 type=selector.TextSelectorType.TEXT,
@@ -37,7 +37,7 @@ DATA_SCHEMA = vol.Schema(
         ),
         vol.Required(
             "Comfort TCP Port",
-            default=(1002),
+            default=(1001),
         ): selector.NumberSelector(
             selector.NumberSelectorConfig(
                 step=1,
