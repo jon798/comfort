@@ -79,15 +79,14 @@ class ComfortSystem:
         print("connecting to " + comfort.ip + " " + str(comfort.port))
         self.comfortsock.connect((comfort.ip, comfort.port))
         self.comfortsock.settimeout(comfort.comforttimeout)
-        self.login(comfort.pin)
+        self.comfortsock.sendall(("\x03LI" + comfort.pin + "\r").encode())
+        print("Sent:", ("\x03LI" + comfort.pin + "\r").encode())
         while True:
             print("Read line.")
             self.readlines(comfort)
             time.sleep(0.5)
 
-    def login(self, pin):
-        self.comfortsock.sendall(("\x03LI" + pin + "\r").encode())
-        print("Sent:", ("\x03LI" + pin + "\r").encode())
+    # def login(self, pin):
 
     def readlines(self, comfort: ComfortSystem, delim="\r"):
         # buffer = ""
