@@ -19,7 +19,7 @@ _LOGGER = logging.getLogger(__name__)
 
 DATA_SCHEMA = vol.Schema(
     {
-        ("pin"): str,
+        ("pinbum"): str,
         ("ip"): str,
         ("port"): int,
         ("comforttimeout"): int,
