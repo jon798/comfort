@@ -44,6 +44,7 @@ class ComfortSystem:
         self.buffer = buffer
         # Create the devices that are part of this hub.
         # In a real implementation, this would query the hub to find the devices.
+        print("Got to here where starting to think about setting up devices.")  # noqa: T201
         self.inputs = [
             ComfortInput(f"{self._id}_1", f"{self._name} 1", self),
             ComfortInput(f"{self._id}_2", f"{self._name} 2", self),
@@ -66,50 +67,24 @@ class ComfortInput:
     """Compfort Input device."""
 
     def __init__(self, inputid: str, name: str, comfort: ComfortSystem) -> None:
-        """Init dummy roller."""
+        """Init Comfort Input."""
         self._id = inputid
         self.hub = comfort
         self.name = name
         self._callbacks = set()
         self._loop = asyncio.get_event_loop()
-        self._target_position = 100
-        self._current_position = 100
-        # Reports if the roller is moving up or down.
-        # >0 is up, <0 is down. This very much just for demonstration.
-        self.moving = 0
 
         # Some static information about this device
-        self.firmware_version = f"0.0.{random.randint(1, 9)}"
-        self.model = "Test Device"
+        self.model = "PIR Input"
 
     @property
-    def roller_id(self) -> str:
-        """Return ID for roller."""
+    def input_id(self) -> str:
+        """Return ID for input."""
         return self._id
-
-    @property
-    def position(self):
-        """Return position for roller."""
-        return self._current_position
-
-    async def set_position(self, position: int) -> None:
-        """
-        Set dummy cover to the given position.
-
-        State is announced a random number of seconds later.
-        """
-        self._target_position = position
-
-        # Update the moving status, and broadcast the update
-        self.moving = position - 50
-        await self.publish_updates()
-
-        self._loop.create_task(self.delayed_update())
 
     async def delayed_update(self) -> None:
         """Publish updates, with a random delay to emulate interaction with device."""
         await asyncio.sleep(random.randint(1, 10))
-        self.moving = 0
         await self.publish_updates()
 
     def register_callback(self, callback: Callable[[], None]) -> None:
@@ -124,28 +99,6 @@ class ComfortInput:
     # notified of any state changeds for the relevant device.
     async def publish_updates(self) -> None:
         """Schedule call all registered callbacks."""
-        self._current_position = self._target_position
+        # self._current_position = self._target_position
         for callback in self._callbacks:
             callback()
-
-    @property
-    def online(self) -> float:
-        """Roller is online."""
-        # The dummy roller is offline about 10% of the time. Returns True if online,
-        # False if offline.
-        return random.random() > 0.1
-
-    @property
-    def battery_level(self) -> int:
-        """Battery level as a percentage."""
-        return random.randint(0, 100)
-
-    @property
-    def battery_voltage(self) -> float:
-        """Return a random voltage roughly that of a 12v battery."""
-        return round(random.random() * 3 + 10, 2)
-
-    @property
-    def illuminance(self) -> int:
-        """Return a sample illuminance in lux."""
-        return random.randint(0, 500)
