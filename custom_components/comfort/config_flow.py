@@ -107,7 +107,7 @@ async def validate_input(hass: HomeAssistant, data: dict) -> dict[Any, Any]:
     comfort = ComfortSystem(
         hass,
         data["Login PIN"],
-        data["Comfort IP Address"],
+        data["Comfort IP address"],
         data["Comfort TCP Port"],
         data["Comfort timeout"],
         data["Retry interval"],
