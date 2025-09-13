@@ -55,8 +55,8 @@ class ComfortSystem:
         self.comfortsock.settimeout(comforttimeout)
         self.comfortsock.sendall(("\x03LI" + pin + "\r").encode())
         print("Sent:", ("\x03LI" + pin + "\r").encode())
-        while True:
-            print("Read line.")
+        for i in range(0, 1000):
+            print(i, " Read line.")
             self.readlines(self)
         # end connection bit
 
