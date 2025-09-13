@@ -6,10 +6,10 @@ import logging
 from typing import TYPE_CHECKING, Any
 
 import voluptuous as vol
-from comfortsys import ComfortSystem
 from homeassistant import config_entries, exceptions
 from homeassistant.helpers import selector
 
+from .comfortsys import ComfortSystem
 from .const import DOMAIN  # pylint:disable=unused-import
 
 if TYPE_CHECKING:

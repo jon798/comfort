@@ -9,9 +9,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from comfortsys import ComfortSystem
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
+
+from .comfortsys import ComfortSystem
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
