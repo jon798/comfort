@@ -146,7 +146,7 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 {
                     vol.Required(
                         COMFORT_PIN,
-                        default=(COMFORT_PIN),
+                        default=({}).get(COMFORT_PIN, vol.UNDEFINED),
                     ): selector.TextSelector(
                         selector.TextSelectorConfig(
                             type=selector.TextSelectorType.TEXT,
