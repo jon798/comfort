@@ -39,10 +39,10 @@ class ComfortSystem:
         self._id = name.lower()
         self.pin = pin
         self.ip = ip
-        self.port = port
-        self.comforttimeout = comforttimeout
-        self.retry = retry
-        self.buffer = buffer
+        self.port = int(port)
+        self.comforttimeout = int(comforttimeout)
+        self.retry = int(retry)
+        self.buffer = int(buffer)
         # Create the devices that are part of this hub.
         # In a real implementation, this would query the hub to find the devices.
         self.comfortsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
