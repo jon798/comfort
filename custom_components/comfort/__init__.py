@@ -29,6 +29,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ComfortConfigEntry) -> b
     """Set up Hello World from a config entry."""
     # Store an instance of the "connecting" class that does the work of speaking
     # with your actual devices.
+    print("Got here")
     entry.runtime_data = comfort.Comfort(
         hass,
         entry.data["pin"],
@@ -39,7 +40,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ComfortConfigEntry) -> b
         entry.data["buffer"],
         entry.data["name"],
     )
-    print("Got here")
+
     # This creates each HA object for each platform your device requires.
     # It's done by calling the `async_setup_entry` function in each platform module.
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
