@@ -65,7 +65,7 @@ class ComfortSystem:
         self.comfortsock.settimeout(comforttimeout)
         self.comfortsock.sendall(("\x03LI" + pin + "\r").encode())
         print("Sent:", ("\x03LI" + pin + "\r").encode())
-        threading.Thread(target=self.worker(), daemon=True).start()
+        # threading.Thread(target=self.worker(), daemon=True).start()
         inputbuffer = ""
         delim = "\r"
         recv_buffer = buffer
