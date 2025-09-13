@@ -36,7 +36,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ComfortConfigEntry) -> b
         entry.data["Comfort TCP Port"],
         entry.data["Comfort Timeout"],
         entry.data["Retry Interval"],
-        entry.data["Buffer Receive Size"],
+        entry.data["Receive Buffer Size"],
         entry.data["System Name"],
     )
 
