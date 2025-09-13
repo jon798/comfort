@@ -80,7 +80,7 @@ class ComfortSystem:
         self.comfortsock.connect((comfort.ip, comfort.port))
         self.comfortsock.settimeout(comfort.comforttimeout)
         self.login(comfort.pin)
-        while true:
+        while True:
             self.readlines(comfort)
             print("Read line.")
             time.sleep(0.5)
