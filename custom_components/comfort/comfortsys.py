@@ -89,7 +89,6 @@ class ComfortSystem:
         while True:
             print("Read line.")
             self.readlines(comfort)
-            time.sleep(0.5)
 
     # def login(self, pin):
 
