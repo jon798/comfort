@@ -30,14 +30,7 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         """Handle a flow initialized by the user."""
         _errors = {}
         if user_input is not None:
-            await self._system(
-                pin=user_input[COMFORT_PIN],
-                ip=user_input[COMFORT_IP],
-                port=user_input[COMFORT_PORT],
-                timeout=user_input[COMFORT_TIMEOUT],
-                retry=user_input[COMFORT_RETRY],
-                buffer=user_input[BUFFER_SIZE],
-            )
+            await self._system(user_input)
 
             await self.async_set_unique_id(
                 ## Do NOT use this in production code
@@ -120,13 +113,11 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             errors=_errors,
         )
 
-    async def _system(
-        self, pin: str, ip: str, port: int, timeout: int, retry: int, buffer: int
-    ) -> None:
+    async def _system(self, params: dict) -> None:
         """Validate system."""
-        print("Comfort Login pin:", pin)
-        print("Comfort IP Address:", ip)
-        print("Comfort TCP Port:L", port)
-        print("Timeout:", timeout)
-        print("Retry delay:", retry)
-        print("Receive buffer size:", buffer)
+        print("Comfort Login pin:", params[COMFORT_PIN])  # noqa: T201
+        print("Comfort IP Address:", params[COMFORT_IP])  # noqa: T201
+        print("Comfort TCP Port:", params[COMFORT_PORT])  # noqa: T201
+        print("Timeout:", params[COMFORT_TIMEOUT])  # noqa: T201
+        print("Retry delay:", params[COMFORT_RETRY])  # noqa: T201
+        print("Receive buffer size:", params[BUFFER_SIZE])  # noqa: T201
