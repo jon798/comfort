@@ -89,7 +89,7 @@ class ComfortSystem:
         self.comfortsock.sendall(("\x03LI" + pin + "\r").encode())
         print("Sent:", ("\x03LI" + pin + "\r").encode())
 
-    async def readlines(self, comfort: ComfortSystem, delim="\r"):
+    def readlines(self, comfort: ComfortSystem, delim="\r"):
         # buffer = ""
         recv_buffer = comfort.buffer
         data = True
@@ -101,8 +101,8 @@ class ComfortSystem:
                 # this next if/else is a bit redundant, but illustrates how the
                 # timeout exception is setup
                 if err == "timed out":
-                    # sleep(1)
-                    # print ('recv timed out, retry later')
+                    time.sleep(1)
+                    print("recv timed out, retry later")
                     self.comfortsock.sendall(
                         "\x03cc00\r".encode()
                     )  # echo command for keepalive
