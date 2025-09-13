@@ -9,10 +9,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from comfortsys import ComfortSystem
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
-
-from . import comfort
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
@@ -22,7 +21,7 @@ if TYPE_CHECKING:
 PLATFORMS = [Platform.SENSOR]
 
 
-type ComfortConfigEntry = ConfigEntry[comfort.ComfortSystem]
+type ComfortConfigEntry = ConfigEntry[ComfortSystem]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ComfortConfigEntry) -> bool:
@@ -30,7 +29,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ComfortConfigEntry) -> b
     # Store an instance of the "connecting" class that does the work of speaking
     # with your actual devices.
     print("Got here")
-    entry.runtime_data = comfort.ComfortSystem(
+    entry.runtime_data = ComfortSystem(
         hass,
         entry.data["pin"],
         entry.data["ip"],
