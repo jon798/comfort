@@ -81,8 +81,8 @@ class ComfortSystem:
         self.comfortsock.settimeout(comfort.comforttimeout)
         self.login(comfort.pin)
         while True:
-            self.readlines(comfort)
             print("Read line.")
+            self.readlines(comfort)
             time.sleep(0.5)
 
     def login(self, pin):
