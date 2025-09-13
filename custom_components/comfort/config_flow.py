@@ -28,7 +28,7 @@ DATA_SCHEMA = vol.Schema(
             ),
         ),
         vol.Required(
-            "Comfort IP address",
+            "Comfort IP Address",
             default=(),
         ): selector.TextSelector(
             selector.TextSelectorConfig(
@@ -47,7 +47,7 @@ DATA_SCHEMA = vol.Schema(
             ),
         ),
         vol.Required(
-            "Comfort timeout",
+            "Comfort Timeout",
             default=(30),
         ): selector.NumberSelector(
             selector.NumberSelectorConfig(
@@ -58,7 +58,7 @@ DATA_SCHEMA = vol.Schema(
             ),
         ),
         vol.Required(
-            "Retry interval",
+            "Retry Interval",
             default=(5),
         ): selector.NumberSelector(
             selector.NumberSelectorConfig(
@@ -107,10 +107,10 @@ async def validate_input(hass: HomeAssistant, data: dict) -> dict[Any, Any]:
     comfort = ComfortSystem(
         hass,
         data["Login PIN"],
-        data["Comfort IP address"],
+        data["Comfort IP Address"],
         int(data["Comfort TCP Port"]),
-        int(data["Comfort timeout"]),
-        int(data["Retry interval"]),
+        int(data["Comfort Timeout"]),
+        int(data["Retry Interval"]),
         int(data["Receive Buffer Size"]),
         data["System Name"],
     )
