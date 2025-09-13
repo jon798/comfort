@@ -133,7 +133,7 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     buffer=int(user_input[BUFFER_SIZE]),
                 ),
             )
-            await self.async_set_unique_id()
+            await self.async_set_unique_id("joncomfortintegration001")
             self._abort_if_unique_id_mismatch()
             return self.async_update_reload_and_abort(
                 self._get_reconfigure_entry(),
