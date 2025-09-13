@@ -20,7 +20,7 @@ _LOGGER = logging.getLogger(__name__)
 DATA_SCHEMA = vol.Schema(
     {
         vol.Required(
-            "Login PIN for Comfort",
+            "Login PIN",
             default=("1234"),
         ): selector.TextSelector(
             selector.TextSelectorConfig(
@@ -28,7 +28,7 @@ DATA_SCHEMA = vol.Schema(
             ),
         ),
         vol.Required(
-            "Comfort ETH02/ETH03 IP address",
+            "Comfort IP address",
             default=(),
         ): selector.TextSelector(
             selector.TextSelectorConfig(
@@ -47,7 +47,7 @@ DATA_SCHEMA = vol.Schema(
             ),
         ),
         vol.Required(
-            "comforttimeout",
+            "Comfort timeout",
             default=(30),
         ): selector.NumberSelector(
             selector.NumberSelectorConfig(
@@ -101,18 +101,18 @@ async def validate_input(hass: HomeAssistant, data: dict) -> dict[str, Any]:
     # This is a simple example to show an error in the UI for a short hostname
     # The exceptions are defined at the end of this file, and are used in the
     # `async_step_user` method below.
-    if len(data["Comfort ETH02/ETH03 IP address"]) < 3:
+    if len(data["Comfort IP address"]) < 3:
         raise InvalidHost
 
     comfort = ComfortSystem(
         hass,
-        data["pin":str],
-        data["ip":str],
-        data["port":int],
-        data["comforttimeout":int],
-        data["retry":int],
-        data["buffer":int],
-        data["name":str],
+        data["Login PIN":str],
+        data["Comfort IP Address":str],
+        data["Comfort TCP Port":int],
+        data["Comfort timeout":int],
+        data["Retry interval":int],
+        data["Receive Buffer Size":int],
+        data["System Name":str],
     )
     # The dummy hub provides a `test_connection` method to ensure it's working
     # as expected
