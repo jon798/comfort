@@ -45,6 +45,13 @@ class ComfortSystem:
         self.buffer = buffer
         # Create the devices that are part of this hub.
         # In a real implementation, this would query the hub to find the devices.
+        self.comfortsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        print("connecting to " + ip + " " + str(port))
+        self.comfortsock.connect((ip, port))
+        self.comfortsock.settimeout(comforttimeout)
+        self.login(pin)
+        # end connection bit
+
         self.inputs = [
             ComfortInput(f"{self._id}_1", f"{self._name} 1", self),
             ComfortInput(f"{self._id}_2", f"{self._name} 2", self),
