@@ -91,7 +91,7 @@ DATA_SCHEMA = vol.Schema(
 )
 
 
-async def validate_input(hass: HomeAssistant, data: dict) -> dict[str, Any]:
+async def validate_input(hass: HomeAssistant, data: dict) -> dict[Any, Any]:
     """Validate the user input allows us to connect.
 
     Data has the keys from DATA_SCHEMA with values provided by the user.
@@ -106,13 +106,13 @@ async def validate_input(hass: HomeAssistant, data: dict) -> dict[str, Any]:
 
     comfort = ComfortSystem(
         hass,
-        data["Login PIN":str],
-        data["Comfort IP Address":str],
-        data["Comfort TCP Port":int],
-        data["Comfort timeout":int],
-        data["Retry interval":int],
-        data["Receive Buffer Size":int],
-        data["System Name":str],
+        data["Login PIN"],
+        data["Comfort IP Address"],
+        data["Comfort TCP Port"],
+        data["Comfort timeout"],
+        data["Retry interval"],
+        data["Receive Buffer Size"],
+        data["System Name"],
     )
     # The dummy hub provides a `test_connection` method to ensure it's working
     # as expected
