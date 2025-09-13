@@ -47,7 +47,7 @@ class ComfortSystem:
         # In a real implementation, this would query the hub to find the devices.
         self.comfortsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print("connecting to " + ip + " " + str(port))
-        self.comfortsock.connect((ip, port))
+        self.comfortsock.connect((ip, int(port)))
         self.comfortsock.settimeout(comforttimeout)
         self.login(pin)
         # end connection bit
