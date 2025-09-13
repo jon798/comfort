@@ -51,9 +51,14 @@ class ComfortSystem:
         # In a real implementation, this would query the hub to find the devices.
         self.comfortsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print("connecting to " + ip + " " + str(int(port)))
-        self.comfortsock.connect((ip, int(port)))
+        self.comfortsock.connect((ip, port))
         self.comfortsock.settimeout(comforttimeout)
-        self.login(pin)
+        self.comfortsock.sendall(("\x03LI" + pin + "\r").encode())
+        print("Sent:", ("\x03LI" + pin + "\r").encode())
+        while True:
+            print("Read line.")
+            self.readlines(self)
+            time.sleep(0.5)
         # end connection bit
 
         self.inputs = [
@@ -89,7 +94,7 @@ class ComfortSystem:
     # def login(self, pin):
 
     def readlines(self, comfort: ComfortSystem, delim="\r"):
-        # buffer = ""
+        buffer = ""
         recv_buffer = comfort.buffer
         data = True
         while data:
