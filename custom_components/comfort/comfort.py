@@ -1,4 +1,4 @@
-"""A demonstration 'hub' that connects several devices."""
+"""Comfort Alam Interface."""
 
 from __future__ import annotations
 

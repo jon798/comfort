@@ -22,7 +22,7 @@ DATA_SCHEMA = vol.Schema(
     {
         ("pin"): str,
         ("ip"): str,
-        ("comfortport"): int,
+        ("port"): int,
         ("comforttimeout"): int,
         ("retry"): int,
         ("buffer"): int,

@@ -20,8 +20,11 @@ if TYPE_CHECKING:
 # List of platforms to support. There should be a matching .py file for each,
 # eg <cover.py> and <sensor.py>
 PLATFORMS = [Platform.SENSOR]
+print("Got to just before type Comfort line.")
 
 type ComfortConfigEntry = ConfigEntry[comfort.Comfort]
+
+print("Got past type Comfort line.")
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ComfortConfigEntry) -> bool:
