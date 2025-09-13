@@ -44,12 +44,13 @@ class ComfortSystem:
         self.buffer = buffer
         # Create the devices that are part of this hub.
         # In a real implementation, this would query the hub to find the devices.
-        print("Got to here where starting to think about setting up devices.")  # noqa: T201
+
         self.inputs = [
             ComfortInput(f"{self._id}_1", f"{self._name} 1", self),
             ComfortInput(f"{self._id}_2", f"{self._name} 2", self),
             ComfortInput(f"{self._id}_3", f"{self._name} 3", self),
         ]
+        self.others = []  # type: list[ComfortInput]
         self.online = True
 
     @property
@@ -64,7 +65,7 @@ class ComfortSystem:
 
 
 class ComfortInput:
-    """Compfort Input device."""
+    """Comfort Input device."""
 
     def __init__(self, inputid: str, name: str, comfort: ComfortSystem) -> None:
         """Init Comfort Input."""
@@ -88,7 +89,7 @@ class ComfortInput:
         await self.publish_updates()
 
     def register_callback(self, callback: Callable[[], None]) -> None:
-        """Register callback, called when Roller changes state."""
+        """Register callback, called when input changes state."""
         self._callbacks.add(callback)
 
     def remove_callback(self, callback: Callable[[], None]) -> None:
@@ -96,7 +97,7 @@ class ComfortInput:
         self._callbacks.discard(callback)
 
     # In a real implementation, this library would call it's call backs when it was
-    # notified of any state changeds for the relevant device.
+    # notified of any state changes for the relevant device.
     async def publish_updates(self) -> None:
         """Schedule call all registered callbacks."""
         # self._current_position = self._target_position
