@@ -46,7 +46,7 @@ class ComfortSystem:
         # Create the devices that are part of this hub.
         # In a real implementation, this would query the hub to find the devices.
         self.comfortsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        print("connecting to " + ip + " " + str(port))
+        print("connecting to " + ip + " " + str(int(port)))
         self.comfortsock.connect((ip, int(port)))
         self.comfortsock.settimeout(comforttimeout)
         self.login(pin)
@@ -76,9 +76,11 @@ class ComfortSystem:
         self.comfortsock.connect((comfort.ip, comfort.port))
         self.comfortsock.settimeout(comfort.comforttimeout)
         self.login(comfort.pin)
+        self.readlines(comfort)
 
     def login(self, pin):
         self.comfortsock.sendall(("\x03LI" + pin + "\r").encode())
+        print("Sent:", ("\x03LI" + pin + "\r").encode())
 
     async def readlines(self, comfort: ComfortSystem, delim="\r"):
         buffer = ""
