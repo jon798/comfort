@@ -21,9 +21,14 @@ if TYPE_CHECKING:
 
 ENTITY_DESCRIPTIONS = (
     BinarySensorEntityDescription(
-        key="Comfort",
+        key="Comfort Input 01",
         name="Comfort Binary Sensor",
-        device_class=BinarySensorDeviceClass.CONNECTIVITY,
+        device_class=BinarySensorDeviceClass.MOTION,
+    ),
+    BinarySensorEntityDescription(
+        key="Comfort Input 02",
+        name="Comfort Binary Sensor",
+        device_class=BinarySensorDeviceClass.MOTION,
     ),
 )
 

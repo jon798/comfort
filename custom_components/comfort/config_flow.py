@@ -1,32 +1,20 @@
 """Adds config flow for Comfort."""
 
 from __future__ import annotations
-from datetime import timedelta
 
 import voluptuous as vol
 from homeassistant import config_entries
-from homeassistant.const import (
-    CONF_PASSWORD,
-    CONF_USERNAME,
-)
 from homeassistant.helpers import selector
-from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from slugify import slugify
 
-from .api import (
-    ComfortApiClient,
-    ComfortApiClientAuthenticationError,
-    ComfortApiClientCommunicationError,
-    ComfortApiClientError,
-)
 from .const import (
-    DOMAIN,
-    LOGGER,
+    BUFFER_SIZE,
     COMFORT_IP,
-    COMFORT_PORT,
     COMFORT_PIN,
-    COMFORT_TIMEOUT,
+    COMFORT_PORT,
     COMFORT_RETRY,
+    COMFORT_TIMEOUT,
+    DOMAIN,
 )
 
 
@@ -48,6 +36,7 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 port=user_input[COMFORT_PORT],
                 timeout=user_input[COMFORT_TIMEOUT],
                 retry=user_input[COMFORT_RETRY],
+                buffer=user_input[BUFFER_SIZE],
             )
 
             await self.async_set_unique_id(
@@ -115,26 +104,29 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                             mode=selector.NumberSelectorMode.BOX,
                         ),
                     ),
+                    vol.Required(
+                        BUFFER_SIZE,
+                        default=(4096),
+                    ): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            step=1024,
+                            min=1024,
+                            max=8192,
+                            mode=selector.NumberSelectorMode.SLIDER,
+                        ),
+                    ),
                 },
             ),
             errors=_errors,
         )
 
-    #  async def _test_credentials(self, username: str, password: str) -> None:
-    #     """Validate credentials."""
-    #     client = ComfortApiClient(
-    #          username=username,
-    #          password=password,
-    #          session=async_create_clientsession(self.hass),
-    #      )
-    #      await client.async_get_data()
-
     async def _system(
-        self, pin: str, ip: str, port: int, timeout: int, retry: int
+        self, pin: str, ip: str, port: int, timeout: int, retry: int, buffer: int
     ) -> None:
         """Validate system."""
-        print(pin)
-        print(ip)
-        print(port)
-        print(timeout)
-        print(retry)
+        print("Comfort Login pin:", pin)
+        print("Comfort IP Address:", ip)
+        print("Comfort TCP Port:L", port)
+        print("Timeout:", timeout)
+        print("Retry delay:", retry)
+        print("Receive buffer size:", buffer)

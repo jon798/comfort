@@ -1,0 +1,430 @@
+"""Sample API Client."""
+
+from __future__ import annotations
+
+import socket
+from typing import Any
+
+import select
+import math
+import time
+import datetime
+import threading
+from datetime import timedelta
+
+
+import aiohttp
+import async_timeout
+
+from custom_components.comfort.const import COMFORT_RETRY
+
+BUFFER_SIZE=4096
+
+
+class ComfortApiClientError(Exception):
+    """Exception to indicate a general API error."""
+
+
+class ComfortApiClientCommunicationError(
+    ComfortApiClientError,
+):
+    """Exception to indicate a communication error."""
+
+
+
+
+
+class ComfortApiClient:
+    """Sample API Client."""
+
+    def login(self):
+        self.comfortsock.sendall(("\x03LI" + self._pin + "\r").encode())
+
+    def __init__(
+        self,
+        pin: str,
+        ip: str,
+        port: int,
+        timeout: timedelta,
+        retry: timedelta,
+    ) -> None:
+        """Initialize."""
+        self._pin = pin
+        self._ip = ip
+        self._port = math.floor(port)
+        self.timeout = timeout
+        self.retry = retry
+        self.connected=False
+        try:
+            self.comfortsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            print("connecting to " + ip + " " + str(port))
+            self.comfortsock.connect((ip, math.floor(port)))
+            self.comfortsock.settimeout(timeout.seconds)
+            self.login()
+            print("Got to the line after login....")
+
+        except socket.error as v:
+            #errorcode = v[0]
+            print("socket error " + str(v))
+            # raise
+            print("lost connection to comfort, reconnecting...")
+            time.sleep(retry.seconds)
+
+    def readcurrentstate(self):
+        if self.connected == True:
+            # get security mode
+            self.comfortsock.sendall("\x03M?\r".encode())
+            # get all zone input states
+            self.comfortsock.sendall("\x03Z?\r".encode())
+            # get all output states
+            self.comfortsock.sendall("\x03Y?\r".encode())
+            # get all flag states
+            self.comfortsock.sendall("\x03f?00\r".encode())
+
+
+
+    def async_get_data(self) -> Any:
+        """Get information from the API."""
+        async with async_timeout.timeout(10):
+            try:
+                for line in self.readlines():
+                    if line[1:] != "cc00":
+                        print(line[1:])
+                    if line[0] == "\x03":  # check for valid prefix
+                        if line[1:3] == "LU":
+                            luMsg = ComfortLUUserLoggedIn(line[1:])
+                            if luMsg.user != 0:
+                                print("login ok")
+                                self.connected = True
+                                # client.publish(ALARMSTATETOPIC, "disarmed")
+                                # self.publish(ALARMCOMMANDTOPIC, "comm test")
+                                setdatetime()
+                                self.readcurrentstate()
+                            elif line[1:3] == "IP":
+                                ipMsg = ComfortIPInputActivationReport(line[1:])
+                                print("input %d state %d" % (ipMsg.input, ipMsg.state))
+                                #self.publish(ALARMINPUTTOPIC % ipMsg.input, ipMsg.state)
+                            elif line[1:3] == "CT":
+                                ipMsgCT = ComfortCTCounterActivationReport(line[1:])
+                                print(
+                                    "counter %d state %d"
+                                    % (ipMsgCT.counter, ipMsgCT.state)
+                                )
+                                #self.publish(
+                                #    ALARMCOUNTERINPUTRANGE % ipMsgCT.counter,
+                                #    ipMsgCT.state,
+                                #)
+                            elif line[1:3] == "Z?":
+                                zMsg = ComfortZ_ReportAllZones(line[1:])
+                                for ipMsgZ in zMsg.inputs:
+                                    # print("input %d state %d" % (ipMsgZ.input, ipMsgZ.state))
+                                    #self.publish(
+                                    #    ALARMINPUTTOPIC % ipMsgZ.input, ipMsgZ.state
+                                    #)
+                                    pass
+                            elif line[1:3] == "M?" or line[1:3] == "MD":
+                                mMsg = ComfortM_SecurityModeReport(line[1:])
+                                print("alarm mode " + mMsg.modename)
+                                #self.publish(ALARMSTATETOPIC, mMsg.modename)
+                                self.entryexitdelay = 0  # zero out the countdown timer
+                            elif line[1:3] == "ER":
+                                erMsg = ComfortERArmReadyNotReady(line[1:])
+                                if not erMsg.zone == 0:
+                                    print("zone not ready: " + str(erMsg.zone))
+                                    self.comfortsock.sendall(
+                                        "\x03KD1A\r".encode()
+                                    )  # force arm
+                            elif line[1:3] == "AM":
+                                amMsg = ComfortAMSystemAlarmReport(line[1:])
+                                #self.publish(ALARMMESSAGETOPIC, amMsg.message)
+                                if amMsg.triggered:
+                                    #self.publish(ALARMSTATETOPIC, "triggered")
+                                    pass
+                            elif line[1:3] == "EX":
+                                exMsg = ComfortEXEntryExitDelayStarted(line[1:])
+                                self.entryexitdelay = exMsg.delay
+                                self.entryexit_timer()
+                                #self.publish(ALARMSTATETOPIC, "pending")
+                            elif line[1:3] == "RP":
+                                #self.publish(ALARMMESSAGETOPIC, "Phone Ring")
+                                pass
+                            elif line[1:3] == "DB":
+                                #self.publish(ALARMMESSAGETOPIC, "Door Bell")
+                                pass
+                            elif line[1:3] == "OP":
+                                ipMsg = ComfortOPOutputActivationReport(line[1:])
+                                print(
+                                    "output %d state %d" % (ipMsg.output, ipMsg.state)
+                                )
+                                #self.publish(
+                                #    ALARMOUTPUTTOPIC % ipMsg.output, ipMsg.state
+                                #)
+                            elif line[1:3] == "Y?":
+                                yMsg = ComfortY_ReportAllOutputs(line[1:])
+                                for opMsgY in yMsg.outputs:
+                                    # print("output %d state %d" % (opMsgY.output, opMsgY.state))
+                                    #self.publish(
+                                    #    ALARMOUTPUTTOPIC % opMsgY.output, opMsgY.state
+                                    #)
+                                    pass
+                            elif line[1:3] == "f?":
+                                fMsg = Comfortf_ReportAllFlags(line[1:])
+                                for fMsgf in fMsg.flags:
+                                    # print("flag %d state %d" % (fMsgf.flag, fMsgf.state))
+                                    #self.publish(
+                                    #    ALARMFLAGTOPIC % fMsgf.flag, fMsgf.state
+                                    #)
+                                    pass
+                            elif line[1:3] == "FL":
+                                flMsg = ComfortFLFlagActivationReport(line[1:])
+                                print("flag %d state %d" % (flMsg.flag, flMsg.state))
+                                #self.publish(ALARMFLAGTOPIC % flMsg.flag, flMsg.state)
+                            elif line[1:3] == "RS":
+                                # on rare occassions comfort ucm might get reset (RS11), our session is no longer valid, need to relogin
+                                print("reset detected")
+                                self.login()
+            except socket.error as v:
+                    # errorcode = v[0]
+                    print("socket error " + str(v))
+                    # raise
+                    print("lost connection to comfort, reconnecting...")
+                    time.sleep(5)
+            # _verify_response_or_raise(response)
+            return  # await response.json()
+
+    async def readlines(self, recv_buffer=BUFFER_SIZE, delim="\r"):
+        buffer = ""
+        data = True
+        while data:
+            try:
+                data = self.comfortsock.recv(recv_buffer).decode()
+            except socket.timeout as e:
+                err = e.args[0]
+                # this next if/else is a bit redundant, but illustrates how the
+                # timeout exception is setup
+                if err == "timed out":
+                    # sleep(1)
+                    # print ('recv timed out, retry later')
+                    self.comfortsock.sendall(
+                    "\x03cc00\r".encode()
+                    )  # echo command for keepalive
+                    continue
+                else:
+                    print(e)
+                    # sys.exit(1)
+            except socket.error as e:
+                # Something else happened, handle error, exit, etc.
+                print(e)
+            raise
+            # sys.exit(1)
+        else:
+            if len(data) == 0:
+                print("orderly shutdown on server end")
+            # sys.exit(0)
+            else:
+                # got a message do something :)
+                buffer += data
+
+                while buffer.find(delim) != -1:
+                    line, buffer = buffer.split("\r", 1)
+                    yield line
+        return
+
+
+class setdatetime():
+        def __init__(self)
+        if self.connected == True:  # set current date and time
+            now = datetime.datetime.now()
+            self.comfortsock.sendall(
+                (
+                    "\x03DT%02d%02d%02d%02d%02d%02d\r"
+                    % (now.year, now.month, now.day, now.hour, now.minute, now.second)
+                ).encode()
+            )
+
+
+class ComfortLUUserLoggedIn(object):
+    def __init__(self, datastr="", user=0):
+        if datastr:
+            self.user = int(datastr[2:4], 16)
+        else:
+            self.user = int(user)
+
+
+class ComfortIPInputActivationReport(object):
+    def __init__(self, datastr="", input=0, state=0):
+        if datastr:
+            self.input = int(datastr[2:4], 16)
+            self.state = int(datastr[4:6], 16)
+        else:
+            self.input = int(input)
+            self.state = int(state)
+
+
+class ComfortCTCounterActivationReport(
+    object
+):  # in format CT1EFF00 ie CT (counter) 1E = 30; state FF00 = 65280
+    def __init__(self, datastr="", input=0, state=0):
+        if datastr:
+            #self.counter = int(datastr[2:4], 16)
+            #self.state = int(
+            #    datastr[4:6], 16
+            #)  # Comfort code document says always 4 digits
+            pass
+        else:
+            #self.counter = int(counter)
+            #self.state = int(state)
+            pass
+
+class ComfortOPOutputActivationReport(object):
+    def __init__(self, datastr="", output=0, state=0):
+        if datastr:
+            self.output = int(datastr[2:4], 16)
+            self.state = int(datastr[4:6], 16)
+        else:
+            self.output = int(output)
+            self.state = int(state)
+
+
+class ComfortFLFlagActivationReport(object):
+    def __init__(self, datastr="", flag=0, state=0):
+        if datastr:
+            self.flag = int(datastr[2:4], 16)
+            self.state = int(datastr[4:6], 16)
+        else:
+            self.flag = int(flag)
+            self.state = int(state)
+
+
+class ComfortZ_ReportAllZones(object):
+    def __init__(self, data={}):
+        self.inputs = []
+        b = (len(data) - 2) // 2  # variable number of zones reported
+        for i in range(1, b + 1):
+            inputbits = int(data[2 * i : 2 * i + 2], 16)
+            for j in range(0, 8):
+                self.inputs.append(
+                    ComfortIPInputActivationReport(
+                        "", 8 * (i - 1) + 1 + j, (inputbits >> j) & 1
+                    )
+                )
+
+
+class ComfortY_ReportAllOutputs(object):
+    def __init__(self, data={}):
+        self.outputs = []
+        b = (len(data) - 2) // 2  # variable number of outputs reported
+        for i in range(1, b + 1):
+            outputbits = int(data[2 * i : 2 * i + 2], 16)
+            for j in range(0, 8):
+                self.outputs.append(
+                    ComfortOPOutputActivationReport(
+                        "", 8 * (i - 1) + 1 + j, (outputbits >> j) & 1
+                    )
+                )
+
+
+class Comfortf_ReportAllFlags(object):
+    def __init__(self, data={}):
+        self.flags = []
+        b = (len(data) - 4) // 2  # b = 32
+        for i in range(2, b + 2):
+            flagbits = int(data[2 * i : 2 * i + 2], 16)
+            for j in range(0, 8):
+                self.flags.append(
+                    ComfortFLFlagActivationReport(
+                        "", 8 * (i - 2) + 1 + j, (flagbits >> j) & 1
+                    )
+                )
+
+
+# mode = { 00=Off, 01=Away, 02=Night, 03=Day, 04=Vacation }
+class ComfortM_SecurityModeReport(object):
+    def __init__(self, data={}):
+        self.mode = int(data[2:4], 16)
+        if self.mode == 0:
+            self.modename = "disarmed"
+        elif self.mode == 1:
+            self.modename = "armed_away"
+        elif self.mode == 2:
+            self.modename = "armed_night"
+        elif self.mode == 3:
+            self.modename = "armed_home"
+        elif self.mode == 4:
+            self.modename = "armed_vacation"
+
+
+# zone = 00 means system can be armed, no open zones
+class ComfortERArmReadyNotReady(object):
+    def __init__(self, data={}):
+        self.zone = int(data[2:4], 16)
+
+
+class ComfortAMSystemAlarmReport(object):
+    def __init__(self, data={}):
+        self.alarm = int(data[2:4], 16)
+        self.triggered = True  # for comfort alarm state Alert, Trouble, Alarm
+        self.parameter = int(data[4:6], 16)
+        if self.alarm == 0:
+            self.message = "Intruder, Zone " + str(self.parameter)
+        elif self.alarm == 1:
+            self.message = "Zone " + str(self.parameter) + " Trouble"
+        elif self.alarm == 2:
+            self.message = "Low Battery"
+        elif self.alarm == 3:
+            self.message = "Power Failure"
+        elif self.alarm == 4:
+            self.message = "Phone Trouble"
+        elif self.alarm == 5:
+            self.message = "Duress"
+        elif self.alarm == 6:
+            self.message = "Arm Failure"
+        elif self.alarm == 8:
+            self.message = "Disarm"
+            self.triggered = False
+        elif self.alarm == 9:
+            self.message = "Arm"
+            self.triggered = False
+        elif self.alarm == 10:
+            self.message = "Tamper"
+        elif self.alarm == 12:
+            self.message = "Entry Warning, Zone " + str(self.parameter)
+            self.triggered = False
+        elif self.alarm == 13:
+            self.message = "Alarm Abort"
+            self.triggered = False
+        elif self.alarm == 14:
+            self.message = "Siren Tamper"
+        elif self.alarm == 15:
+            self.message = "Bypass, Zone " + str(self.parameter)
+            self.triggered = False
+        elif self.alarm == 17:
+            self.message = "Dial Test"
+            self.triggered = False
+        elif self.alarm == 19:
+            self.message = "Entry Alert, Zone " + str(self.parameter)
+            self.triggered = False
+        elif self.alarm == 20:
+            self.message = "Fire"
+        elif self.alarm == 21:
+            self.message = "Panic"
+        elif self.alarm == 22:
+            self.message = "GSM Trouble"
+        elif self.alarm == 23:
+            self.message = "New Message"
+            self.triggered = False
+        elif self.alarm == 24:
+            self.message = "Doorbell"
+            self.triggered = False
+        elif self.alarm == 25:
+            self.message = "Comms Failure RS485"
+        elif self.alarm == 26:
+            self.message = "Signin Tamper"
+
+
+class ComfortEXEntryExitDelayStarted(object):
+    def __init__(self, data={}):
+        self.type = int(data[2:4], 16)
+        self.delay = int(data[4:6], 16)
+
+
