@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 PLATFORMS = [Platform.SENSOR]
 
 
-type ComfortConfigEntry = ConfigEntry[comfort.Comfort]
+type ComfortConfigEntry = ConfigEntry[comfort.ComfortSystem]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ComfortConfigEntry) -> bool:
@@ -30,7 +30,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ComfortConfigEntry) -> b
     # Store an instance of the "connecting" class that does the work of speaking
     # with your actual devices.
     print("Got here")
-    entry.runtime_data = comfort.Comfort(
+    entry.runtime_data = comfort.ComfortSystem(
         hass,
         entry.data["pin"],
         entry.data["ip"],

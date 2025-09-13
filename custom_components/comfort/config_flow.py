@@ -9,7 +9,7 @@ import voluptuous as vol
 from homeassistant import config_entries, exceptions
 from homeassistant.helpers import selector
 
-from comfort import Comfort
+from comfort import ComfortSystem
 
 from .const import DOMAIN  # pylint:disable=unused-import
 
@@ -44,7 +44,7 @@ async def validate_input(hass: HomeAssistant, data: dict) -> dict[str, Any]:
     if len(data["ip"]) < 3:
         raise InvalidHost
 
-    comfort = Comfort(
+    comfort = ComfortSystem(
         hass,
         data["pin":str],
         data["ip":str],

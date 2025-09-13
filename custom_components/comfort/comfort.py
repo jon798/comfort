@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
 
 
-class Comfort:
+class ComfortSystem:
     """Comfort Alarm system interface."""
 
     manufacturer = "Cytech"
@@ -65,7 +65,7 @@ class Comfort:
 class ComfortInput:
     """Compfort Input device."""
 
-    def __init__(self, inputid: str, name: str, comfort: Comfort) -> None:
+    def __init__(self, inputid: str, name: str, comfort: ComfortSystem) -> None:
         """Init dummy roller."""
         self._id = inputid
         self.hub = comfort
