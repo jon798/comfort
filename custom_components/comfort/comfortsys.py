@@ -7,11 +7,15 @@ from __future__ import annotations
 # See https://developers.home-assistant.io/docs/creating_integration_manifest
 # for more information.
 
+from os import wait
 import random
 import socket
 import asyncio
+import time
 
 from typing import TYPE_CHECKING, Callable
+
+from sqlalchemy import true
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
@@ -76,7 +80,9 @@ class ComfortSystem:
         self.comfortsock.connect((comfort.ip, comfort.port))
         self.comfortsock.settimeout(comfort.comforttimeout)
         self.login(comfort.pin)
-        self.readlines(comfort)
+        while true:
+            self.readlines(comfort)
+            time.sleep(0.5)
 
     def login(self, pin):
         self.comfortsock.sendall(("\x03LI" + pin + "\r").encode())
