@@ -58,7 +58,6 @@ class ComfortSystem:
         while True:
             print("Read line.")
             self.readlines(self)
-            time.sleep(0.5)
         # end connection bit
 
         self.inputs = [
