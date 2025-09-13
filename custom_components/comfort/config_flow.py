@@ -121,19 +121,91 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             errors=_errors,
         )
 
-    async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None):
+    async def async_step_reconfigure(self, user_input: dict | None = None):
         if user_input is not None:
-            # TODO: process user input
-            self.async_set_unique_id(user_id)
+            (
+                await self._system(
+                    pin=user_input[COMFORT_PIN],
+                    ip=user_input[COMFORT_IP],
+                    port=int(user_input[COMFORT_PORT]),
+                    comforttimeout=int(user_input[COMFORT_TIMEOUT]),
+                    retry=int(user_input[COMFORT_RETRY]),
+                    buffer=int(user_input[BUFFER_SIZE]),
+                ),
+            )
+            await self.async_set_unique_id()
             self._abort_if_unique_id_mismatch()
             return self.async_update_reload_and_abort(
                 self._get_reconfigure_entry(),
-                data_updates=data,
+                data_updates=user_input,
             )
 
         return self.async_show_form(
             step_id="reconfigure",
-            data_schema=vol.Schema({vol.Required("input_parameter"): str}),
+            data_schema=vol.Schema(
+                {
+                    vol.Required(
+                        COMFORT_PIN,
+                        default=(user_input or {}).get(COMFORT_PIN, vol.UNDEFINED),
+                    ): selector.TextSelector(
+                        selector.TextSelectorConfig(
+                            type=selector.TextSelectorType.TEXT,
+                        ),
+                    ),
+                    vol.Required(
+                        COMFORT_IP,
+                        default=(user_input or {}).get(COMFORT_IP, vol.UNDEFINED),
+                    ): selector.TextSelector(
+                        selector.TextSelectorConfig(
+                            type=selector.TextSelectorType.TEXT,
+                        ),
+                    ),
+                    vol.Required(
+                        COMFORT_PORT,
+                        default=(1001),
+                    ): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            step=1,
+                            min=1,
+                            max=65535,
+                            mode=selector.NumberSelectorMode.BOX,
+                        ),
+                    ),
+                    vol.Required(
+                        COMFORT_TIMEOUT,
+                        default=(30),
+                    ): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            step=1,
+                            min=10,
+                            max=240,
+                            mode=selector.NumberSelectorMode.BOX,
+                        ),
+                    ),
+                    vol.Required(
+                        COMFORT_RETRY,
+                        default=(5),
+                    ): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            step=1,
+                            min=1,
+                            max=240,
+                            mode=selector.NumberSelectorMode.BOX,
+                        ),
+                    ),
+                    vol.Required(
+                        BUFFER_SIZE,
+                        default=(4096),
+                    ): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            step=1024,
+                            min=1024,
+                            max=8192,
+                            mode=selector.NumberSelectorMode.SLIDER,
+                        ),
+                    ),
+                },
+            ),
         )
 
     async def _system(
