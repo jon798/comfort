@@ -29,7 +29,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ComfortConfigEntry) -> b
     """Set up Hello World from a config entry."""
     # Store an instance of the "connecting" class that does the work of speaking
     # with your actual devices.
-    print("Got here")
     entry.runtime_data = ComfortSystem(
         hass,
         entry.data["pin"],
