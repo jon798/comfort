@@ -34,10 +34,10 @@ class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 await self._system(
                     pin=user_input[COMFORT_PIN],
                     ip=user_input[COMFORT_IP],
-                    port=user_input[COMFORT_PORT],
-                    comforttimeout=user_input[COMFORT_TIMEOUT],
-                    retry=user_input[COMFORT_RETRY],
-                    buffer=user_input[BUFFER_SIZE],
+                    port=int(user_input[COMFORT_PORT]),
+                    comforttimeout=int(user_input[COMFORT_TIMEOUT]),
+                    retry=int(user_input[COMFORT_RETRY]),
+                    buffer=int(user_input[BUFFER_SIZE]),
                 ),
             )
             await self.async_set_unique_id(
