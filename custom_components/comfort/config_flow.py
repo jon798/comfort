@@ -108,10 +108,10 @@ async def validate_input(hass: HomeAssistant, data: dict) -> dict[Any, Any]:
         hass,
         data["Login PIN"],
         data["Comfort IP address"],
-        data["Comfort TCP Port"],
-        data["Comfort timeout"],
-        data["Retry interval"],
-        data["Receive Buffer Size"],
+        int(data["Comfort TCP Port"]),
+        int(data["Comfort timeout"]),
+        int(data["Retry interval"]),
+        int(data["Receive Buffer Size"]),
         data["System Name"],
     )
     # The dummy hub provides a `test_connection` method to ensure it's working
@@ -192,7 +192,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_reconfigure(self, user_input=None):
         if user_input is not None:
-            # TODO: process user input
+            info = await validate_input(self.hass, user_input)
             # await self.async_set_unique_id(user_id)
             # self._abort_if_unique_id_mismatch()
             return self.async_update_reload_and_abort(
