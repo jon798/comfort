@@ -12,6 +12,8 @@ import random
 import socket
 import asyncio
 import time
+import threading
+import queue
 
 from typing import TYPE_CHECKING, Callable
 
@@ -20,11 +22,18 @@ from sqlalchemy import true
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
 
+q = queue.SimpleQueue()
+
 
 class ComfortSystem:
     """Comfort Alarm system interface."""
 
     manufacturer = "Cytech"
+
+    def worker(self):
+        while True:
+            item = q.get()
+            print("Received: ", {item})
 
     def __init__(
         self,
@@ -47,6 +56,7 @@ class ComfortSystem:
         self.comforttimeout = int(comforttimeout)
         self.retry = int(retry)
         self.buffer = int(buffer)
+
         # Create the devices that are part of this hub.
         # In a real implementation, this would query the hub to find the devices.
         self.comfortsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -55,45 +65,10 @@ class ComfortSystem:
         self.comfortsock.settimeout(comforttimeout)
         self.comfortsock.sendall(("\x03LI" + pin + "\r").encode())
         print("Sent:", ("\x03LI" + pin + "\r").encode())
-        for i in range(0, 1000):
-            print(i, " Read line.")
-            self.readlines(self)
-        # end connection bit
-
-        self.inputs = [
-            ComfortInput(f"{self._id}_1", f"{self._name} 1", self),
-            ComfortInput(f"{self._id}_2", f"{self._name} 2", self),
-            ComfortInput(f"{self._id}_3", f"{self._name} 3", self),
-        ]
-        self.others = []  # type: list[ComfortInput]
-        self.online = True
-
-    @property
-    def hub_id(self) -> str:
-        """ID for dummy hub."""
-        return self._id
-
-    async def test_connection(self) -> bool:
-        """Test connectivity to the Dummy hub is OK."""
-        await asyncio.sleep(1)
-        return True
-
-    def connect(self, comfort: ComfortSystem):
-        self.comfortsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        print("connecting to " + comfort.ip + " " + str(comfort.port))
-        self.comfortsock.connect((comfort.ip, comfort.port))
-        self.comfortsock.settimeout(comfort.comforttimeout)
-        self.comfortsock.sendall(("\x03LI" + comfort.pin + "\r").encode())
-        print("Sent:", ("\x03LI" + comfort.pin + "\r").encode())
-        while True:
-            print("Read line.")
-            self.readlines(comfort)
-
-    # def login(self, pin):
-
-    def readlines(self, comfort: ComfortSystem, delim="\r"):
-        buffer = ""
-        recv_buffer = comfort.buffer
+        threading.Thread(target=self.worker(), daemon=True).start()
+        inputbuffer = ""
+        delim = "\r"
+        recv_buffer = buffer
         data = True
         while data:
             try:
@@ -123,14 +98,31 @@ class ComfortSystem:
                 # sys.exit(0)
                 else:
                     # got a message do something :)
-                    buffer += data
+                    inputbuffer += data
 
-                    while buffer.find(delim) != -1:
-                        line, buffer = buffer.split("\r", 1)
+                    while inputbuffer.find(delim) != -1:
+                        line, inputbuffer = inputbuffer.split("\r", 1)
                         print(line)  # noqa: T201
-                        yield line
-                        buffer = ""
+                        q.put(line)
         return
+
+    #    self.inputs = [
+    #            ComfortInput(f"{self._id}_1", f"{self._name} 1", self),
+    #            ComfortInput(f"{self._id}_2", f"{self._name} 2", self),
+    #            ComfortInput(f"{self._id}_3", f"{self._name} 3", self),
+
+    #       self.others = []  # type: list[ComfortInput]
+    #       self.online = True
+
+    @property
+    def hub_id(self) -> str:
+        """ID for dummy hub."""
+        return self._id
+
+    async def test_connection(self) -> bool:
+        """Test connectivity to the Dummy hub is OK."""
+        await asyncio.sleep(1)
+        return True
 
 
 class ComfortInput:
