@@ -101,7 +101,7 @@ async def validate_input(hass: HomeAssistant, data: dict) -> dict[str, Any]:
     # This is a simple example to show an error in the UI for a short hostname
     # The exceptions are defined at the end of this file, and are used in the
     # `async_step_user` method below.
-    if len(data["ip"]) < 3:
+    if len(data["Comfort ETH02/ETH03 IP address"]) < 3:
         raise InvalidHost
 
     comfort = ComfortSystem(
