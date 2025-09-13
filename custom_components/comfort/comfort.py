@@ -13,21 +13,38 @@ import random
 from homeassistant.core import HomeAssistant
 
 
-class comfort:
+class Comfort:
     """Comfort Alarm system interface."""
 
     manufacturer = "Cytech"
 
-    def __init__(self, hass: HomeAssistant, host: str) -> None:
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        pin: str,
+        ip: str,
+        port: int,
+        comforttimeout: int,
+        retry: int,
+        buffer: int,
+        name: str,
+    ) -> None:
         """Init Comfort Alarm."""
-        self._host = host
         self._hass = hass
-        self._name = host
-        self._id = host.lower()
-        self.rollers = [
-            Roller(f"{self._id}_1", f"{self._name} 1", self),
-            Roller(f"{self._id}_2", f"{self._name} 2", self),
-            Roller(f"{self._id}_3", f"{self._name} 3", self),
+        self._name = name
+        self._id = name.lower()
+        self.pin = pin
+        self.ip = ip
+        self.port = port
+        self.comforttimeout = comforttimeout
+        self.retry = retry
+        self.buffer = buffer
+        # Create the devices that are part of this hub.
+        # In a real implementation, this would query the hub to find the devices.
+        self.inputs = [
+            ComfortInput(f"{self._id}_1", f"{self._name} 1", self),
+            ComfortInput(f"{self._id}_2", f"{self._name} 2", self),
+            ComfortInput(f"{self._id}_3", f"{self._name} 3", self),
         ]
         self.online = True
 
@@ -42,13 +59,13 @@ class comfort:
         return True
 
 
-class Roller:
-    """Dummy roller (device for HA) for Hello World example."""
+class ComfortInput:
+    """Compfort Input device."""
 
-    def __init__(self, rollerid: str, name: str, hub: Hub) -> None:
+    def __init__(self, inputid: str, name: str, comfort: Comfort) -> None:
         """Init dummy roller."""
-        self._id = rollerid
-        self.hub = hub
+        self._id = inputid
+        self.hub = comfort
         self.name = name
         self._callbacks = set()
         self._loop = asyncio.get_event_loop()

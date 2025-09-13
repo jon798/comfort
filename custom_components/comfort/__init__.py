@@ -21,14 +21,23 @@ if TYPE_CHECKING:
 # eg <cover.py> and <sensor.py>
 PLATFORMS = [Platform.SENSOR]
 
-type ComfortConfigEntry = ConfigEntry[comfort.comfort]
+type ComfortConfigEntry = ConfigEntry[comfort.Comfort]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ComfortConfigEntry) -> bool:
     """Set up Hello World from a config entry."""
     # Store an instance of the "connecting" class that does the work of speaking
     # with your actual devices.
-    entry.runtime_data = comfort.comfort(hass, entry.data["host"])
+    entry.runtime_data = comfort.Comfort(
+        hass,
+        entry.data["pin"],
+        entry.data["ip"],
+        entry.data["port"],
+        entry.data["comforttimeout"],
+        entry.data["retry"],
+        entry.data["buffer"],
+        entry.data["name"],
+    )
 
     # This creates each HA object for each platform your device requires.
     # It's done by calling the `async_setup_entry` function in each platform module.

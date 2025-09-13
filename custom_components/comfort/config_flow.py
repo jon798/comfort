@@ -2,10 +2,15 @@
 
 from __future__ import annotations
 
+from ipaddress import ip_address
+import logging
+
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.helpers import selector
-from slugify import slugify
+from homeassistant.core import HomeAssistant
+
+from comfort import Comfort
 
 from .const import (
     BUFFER_SIZE,
@@ -17,204 +22,80 @@ from .const import (
     DOMAIN,
 )
 
+_LOGGER = logging.getLogger(__name__)
 
-class ComfortFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
-    """Config flow for Blueprint."""
+DATA_SCHEMA = vol.Schema(
+    {
+        ("pin"): str,
+        ("ip"): str,
+        ("comfortport"): int,
+        ("comforttimeout"): int,
+        ("retry"): int,
+        ("buffer"): int,
+    }
+)
 
-    VERSION = 1
 
-    async def async_step_user(
-        self,
-        user_input: dict | None = None,
-    ) -> config_entries.ConfigFlowResult:
-        """Handle a flow initialized by the user."""
-        _errors = {}
-        if user_input is not None:
-            (
-                await self._system(
-                    pin=user_input[COMFORT_PIN],
-                    ip=user_input[COMFORT_IP],
-                    port=int(user_input[COMFORT_PORT]),
-                    comforttimeout=int(user_input[COMFORT_TIMEOUT]),
-                    retry=int(user_input[COMFORT_RETRY]),
-                    buffer=int(user_input[BUFFER_SIZE]),
-                ),
-            )
-            await self.async_set_unique_id(
-                ## Do NOT use this in production code
-                ## The unique_id should never be something that can change
-                ## https://developers.home-assistant.io/docs/config_entries_config_flow_handler#unique-ids
-                unique_id="joncomfortintegration001"
-            )
-            self._abort_if_unique_id_configured()
-            return self.async_create_entry(
-                title="Comfort Alarm",
-                data=user_input,
-            )
+async def validate_input(hass: HomeAssistant, data: dict) -> dict[str, Any]:
+    """Validate the user input allows us to connect.
 
-        return self.async_show_form(
-            step_id="user",
-            data_schema=vol.Schema(
-                {
-                    vol.Required(
-                        COMFORT_PIN,
-                        default=(user_input or {}).get(COMFORT_PIN, vol.UNDEFINED),
-                    ): selector.TextSelector(
-                        selector.TextSelectorConfig(
-                            type=selector.TextSelectorType.TEXT,
-                        ),
-                    ),
-                    vol.Required(
-                        COMFORT_IP,
-                        default=(user_input or {}).get(COMFORT_IP, vol.UNDEFINED),
-                    ): selector.TextSelector(
-                        selector.TextSelectorConfig(
-                            type=selector.TextSelectorType.TEXT,
-                        ),
-                    ),
-                    vol.Required(
-                        COMFORT_PORT,
-                        default=(1001),
-                    ): selector.NumberSelector(
-                        selector.NumberSelectorConfig(
-                            step=1,
-                            min=1,
-                            max=65535,
-                            mode=selector.NumberSelectorMode.BOX,
-                        ),
-                    ),
-                    vol.Required(
-                        COMFORT_TIMEOUT,
-                        default=(30),
-                    ): selector.NumberSelector(
-                        selector.NumberSelectorConfig(
-                            step=1,
-                            min=10,
-                            max=240,
-                            mode=selector.NumberSelectorMode.BOX,
-                        ),
-                    ),
-                    vol.Required(
-                        COMFORT_RETRY,
-                        default=(5),
-                    ): selector.NumberSelector(
-                        selector.NumberSelectorConfig(
-                            step=1,
-                            min=1,
-                            max=240,
-                            mode=selector.NumberSelectorMode.BOX,
-                        ),
-                    ),
-                    vol.Required(
-                        BUFFER_SIZE,
-                        default=(4096),
-                    ): selector.NumberSelector(
-                        selector.NumberSelectorConfig(
-                            step=1024,
-                            min=1024,
-                            max=8192,
-                            mode=selector.NumberSelectorMode.SLIDER,
-                        ),
-                    ),
-                },
-            ),
-            errors=_errors,
-        )
+    Data has the keys from DATA_SCHEMA with values provided by the user.
+    """
+    # Validate the data can be used to set up a connection.
 
-    async def async_step_reconfigure(self, user_input: dict | None = None):
-        if user_input is not None:
-            (
-                await self._system(
-                    pin=user_input[COMFORT_PIN],
-                    ip=user_input[COMFORT_IP],
-                    port=int(user_input[COMFORT_PORT]),
-                    comforttimeout=int(user_input[COMFORT_TIMEOUT]),
-                    retry=int(user_input[COMFORT_RETRY]),
-                    buffer=int(user_input[BUFFER_SIZE]),
-                ),
-            )
-            await self.async_set_unique_id("joncomfortintegration001")
-            self._abort_if_unique_id_mismatch()
-            return self.async_update_reload_and_abort(
-                self._get_reconfigure_entry(),
-                data_updates=user_input,
-            )
+    # This is a simple example to show an error in the UI for a short hostname
+    # The exceptions are defined at the end of this file, and are used in the
+    # `async_step_user` method below.
+    if len(data["ip"]) < 3:
+        raise InvalidHost
 
-        return self.async_show_form(
-            step_id="reconfigure",
-            data_schema=vol.Schema(
-                {
-                    vol.Required(
-                        COMFORT_PIN,
-                        default=({}).get(COMFORT_PIN, vol.UNDEFINED),
-                    ): selector.TextSelector(
-                        selector.TextSelectorConfig(
-                            type=selector.TextSelectorType.TEXT,
-                        ),
-                    ),
-                    vol.Required(
-                        COMFORT_IP,
-                        default=(user_input or {}).get(COMFORT_IP, vol.UNDEFINED),
-                    ): selector.TextSelector(
-                        selector.TextSelectorConfig(
-                            type=selector.TextSelectorType.TEXT,
-                        ),
-                    ),
-                    vol.Required(
-                        COMFORT_PORT,
-                        default=(1001),
-                    ): selector.NumberSelector(
-                        selector.NumberSelectorConfig(
-                            step=1,
-                            min=1,
-                            max=65535,
-                            mode=selector.NumberSelectorMode.BOX,
-                        ),
-                    ),
-                    vol.Required(
-                        COMFORT_TIMEOUT,
-                        default=(30),
-                    ): selector.NumberSelector(
-                        selector.NumberSelectorConfig(
-                            step=1,
-                            min=10,
-                            max=240,
-                            mode=selector.NumberSelectorMode.BOX,
-                        ),
-                    ),
-                    vol.Required(
-                        COMFORT_RETRY,
-                        default=(5),
-                    ): selector.NumberSelector(
-                        selector.NumberSelectorConfig(
-                            step=1,
-                            min=1,
-                            max=240,
-                            mode=selector.NumberSelectorMode.BOX,
-                        ),
-                    ),
-                    vol.Required(
-                        BUFFER_SIZE,
-                        default=(4096),
-                    ): selector.NumberSelector(
-                        selector.NumberSelectorConfig(
-                            step=1024,
-                            min=1024,
-                            max=8192,
-                            mode=selector.NumberSelectorMode.SLIDER,
-                        ),
-                    ),
-                },
-            ),
-        )
+    comfort = Comfort(
+        hass,
+        data["pin"],
+        data["ip"],
+        data["port"],
+        data["comforttimeout"],
+        data["retry"],
+        data["buffer"],
+        data["name"],
+    )
+    # The dummy hub provides a `test_connection` method to ensure it's working
+    # as expected
+    result = await comfort.test_connection()
+    if not result:
+        # If there is an error, raise an exception to notify HA that there was a
+        # problem. The UI will also show there was a problem
+        raise CannotConnect
 
-    async def _system(
-        self, pin: str, ip: str, port: int, comforttimeout: int, retry: int, buffer: int
-    ) -> None:
-        """Validate system."""
-        print("Comfort Login pin:", pin)  # noqa: T201
-        print("Comfort IP Address:", ip)  # noqa: T201
-        print("Comfort TCP Port:", port)  # noqa: T201
-        print("Timeout:", comforttimeout)  # noqa: T201
-        print("Retry delay:", retry)  # noqa: T201
-        print("Receive buffer size:", buffer)  # noqa: T201
+    # If your PyPI package is not built with async, pass your methods
+    # to the executor:
+    # await hass.async_add_executor_job(
+    #     your_validate_func, data["username"], data["password"]
+    # )
+
+    # If you cannot connect:
+    # throw CannotConnect
+    # If the authentication is wrong:
+    # InvalidAuth
+
+    # Return info that you want to store in the config entry.
+    # "Title" is what is displayed to the user for this hub device
+    # It is stored internally in HA as part of the device config.
+    # See `async_step_user` below for how this is used
+
+    print("Comfort Login pin:", comfort.pin)  # noqa: T201
+    print("Comfort IP Address:", comfort.ip)  # noqa: T201
+    print("Comfort TCP Port:", comfort.port)  # noqa: T201
+    print("Timeout:", comfort.comforttimeout)  # noqa: T201
+    print("Retry delay:", comfort.retry)  # noqa: T201
+    print("Receive buffer size:", comfort.buffer)  # noqa: T201
+
+    return {"title": "Comfort Alarm"}
+
+
+class CannotConnect(exceptions.HomeAssistantError):
+    """Error to indicate we cannot connect."""
+
+
+class InvalidHost(exceptions.HomeAssistantError):
+    """Error to indicate there is an invalid hostname."""
