@@ -82,6 +82,7 @@ class ComfortSystem:
         self.login(comfort.pin)
         while true:
             self.readlines(comfort)
+            print("Read line.")
             time.sleep(0.5)
 
     def login(self, pin):
@@ -89,7 +90,7 @@ class ComfortSystem:
         print("Sent:", ("\x03LI" + pin + "\r").encode())
 
     async def readlines(self, comfort: ComfortSystem, delim="\r"):
-        buffer = ""
+        # buffer = ""
         recv_buffer = comfort.buffer
         data = True
         while data:
@@ -126,6 +127,7 @@ class ComfortSystem:
                         line, buffer = buffer.split("\r", 1)
                         print(line)  # noqa: T201
                         yield line
+                        buffer = ""
         return
 
 
