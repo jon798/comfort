@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 # List of platforms to support. There should be a matching .py file for each,
 # eg <cover.py> and <sensor.py>
-PLATFORMS = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.SWITCH]
+PLATFORMS = [Platform.SENSOR]
 
 type ComfortConfigEntry = ConfigEntry[comfort.comfort]
 

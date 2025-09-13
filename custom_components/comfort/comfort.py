@@ -14,7 +14,7 @@ from homeassistant.core import HomeAssistant
 
 
 class comfort:
-    """Dummy hub for Hello World example."""
+    """Comfort Alarm system interface."""
 
     manufacturer = "Cytech"
 
