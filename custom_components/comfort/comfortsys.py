@@ -69,9 +69,10 @@ class ComfortSystem:
         delim = "\r"
         recv_buffer = buffer
         data = True
+        data = self.comfortsock.recv(recv_buffer).decode()
+        time.sleep(0.5)
         for i in range(0, 100):
-            time.sleep(0.5)
-            data = self.comfortsock.recv(recv_buffer).decode()
+            data = data + self.comfortsock.recv(recv_buffer).decode()
             print(i, ":", data, ".")
         return
 
