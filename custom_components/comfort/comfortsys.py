@@ -68,6 +68,7 @@ class ComfortSystem:
         # threading.Thread(target=self.worker(), daemon=True).start()
 
     async def readdata(self, comfortsock):
+        print("Is this function ever getting called? How do I do that?")
         self.comfortsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         delim = "\r"
         recv_buffer = 4096
