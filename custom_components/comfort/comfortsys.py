@@ -30,11 +30,6 @@ class ComfortSystem:
 
     manufacturer = "Cytech"
 
-    def worker(self):
-        while True:
-            item = q.get()
-            print("Received: ", {item})
-
     def __init__(
         self,
         hass: HomeAssistant,
@@ -59,51 +54,25 @@ class ComfortSystem:
 
         # Create the devices that are part of this hub.
         # In a real implementation, this would query the hub to find the devices.
+        inputbuffer = ""
         self.comfortsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print("connecting to " + ip + " " + str(int(port)))
-        self.comfortsock.connect((ip, int(port)))
+        try:
+            self.comfortsock.connect((ip, int(port)))
+        except Exception as e:
+            print("Could not connect to Comfort panel:", e)  # noqa: T201
+            raise
         self.comfortsock.settimeout(comforttimeout)
         self.comfortsock.sendall(("\x03LI" + pin + "\r").encode())
         print("Sent:", ("\x03LI" + pin + "\r").encode())
         # threading.Thread(target=self.worker(), daemon=True).start()
-        inputbuffer = ""
         delim = "\r"
         recv_buffer = buffer
         data = True
-        while data:
-            try:
-                data = self.comfortsock.recv(recv_buffer).decode()
-            except socket.timeout as e:
-                err = e.args[0]
-                # this next if/else is a bit redundant, but illustrates how the
-                # timeout exception is setup
-                if err == "timed out":
-                    time.sleep(1)
-                    print("recv timed out, retry later")
-                    self.comfortsock.sendall(
-                        "\x03cc00\r".encode()
-                    )  # echo command for keepalive
-                    continue
-                else:
-                    print(e)
-            # sys.exit(1)
-            except socket.error as e:
-                # Something else happened, handle error, exit, etc.
-                print(e)
-                raise
-                # sys.exit(1)
-            else:
-                if len(data) == 0:
-                    print("orderly shutdown on server end")
-                # sys.exit(0)
-                else:
-                    # got a message do something :)
-                    inputbuffer += data
-
-                    while inputbuffer.find(delim) != -1:
-                        line, inputbuffer = inputbuffer.split("\r", 1)
-                        print(line)  # noqa: T201
-                        q.put(line)
+        for i in range(0, 100):
+            time.sleep(0.5)
+            data = self.comfortsock.recv(recv_buffer).decode()
+            print(i, ":", data, ".")
         return
 
     #    self.inputs = [

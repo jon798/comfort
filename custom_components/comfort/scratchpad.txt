@@ -1,0 +1,40 @@
+   def worker(self):
+        while True:
+            item = q.get()
+            print("Received: ", {item})
+
+
+      while data:
+            try:
+                data = self.comfortsock.recv(recv_buffer).decode()
+            except socket.timeout as e:
+                err = e.args[0]
+                # this next if/else is a bit redundant, but illustrates how the
+                # timeout exception is setup
+                if err == "timed out":
+                    time.sleep(1)
+                    print("recv timed out, retry later")
+                    self.comfortsock.sendall(
+                        "\x03cc00\r".encode()
+                    )  # echo command for keepalive
+                    continue
+                else:
+                    print(e)
+            # sys.exit(1)
+            except socket.error as e:
+                # Something else happened, handle error, exit, etc.
+                print(e)
+                raise
+                # sys.exit(1)
+            else:
+                if len(data) == 0:
+                    print("orderly shutdown on server end")
+                # sys.exit(0)
+                else:
+                    # got a message do something :)
+                    inputbuffer += data
+
+                    while inputbuffer.find(delim) != -1:
+                        line, inputbuffer = inputbuffer.split("\r", 1)
+                        print(line)  # noqa: T201
+                        q.put(line)
