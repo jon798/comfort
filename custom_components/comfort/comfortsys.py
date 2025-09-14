@@ -43,18 +43,16 @@ class ComfortSystem:
     ) -> None:
         """Init Comfort Alarm."""
         self._hass = hass
-        self._name = name
-        self._id = name.lower()
+        self.name = name
         self.pin = pin
         self.ip = ip
         self.port = int(port)
         self.comforttimeout = int(comforttimeout)
         self.retry = int(retry)
         self.buffer = int(buffer)
-
+        self.id = name.lower()
         # Create the devices that are part of this hub.
         # In a real implementation, this would query the hub to find the devices.
-        inputbuffer = ""
         self.comfortsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print("connecting to " + ip + " " + str(int(port)))
         try:
@@ -67,7 +65,7 @@ class ComfortSystem:
         print("Sent:", ("\x03LI" + pin + "\r").encode())
         # threading.Thread(target=self.worker(), daemon=True).start()
 
-    async def readdata(self, comfortsock):
+    async def readlines(self):
         print("Is this function ever getting called? How do I do that?")
         self.comfortsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         delim = "\r"
@@ -82,7 +80,7 @@ class ComfortSystem:
                 # timeout exception is setup
                 if err == "timed out":
                     # sleep(1)
-                    # print ('recv timed out, retry later')
+                    print("recv timed out, retry later")
                     self.comfortsock.sendall(
                         "\x03cc00\r".encode()
                     )  # echo command for keepalive
@@ -102,12 +100,10 @@ class ComfortSystem:
                 else:
                     # got a message do something :)
                     inputbuffer += data
-
                     while inputbuffer.find(delim) != -1:
                         line, inputbuffer = inputbuffer.split("\r", 1)
                         print("Received line:", line)  # noqa: T201
                         yield line
-        return
 
     #    self.inputs = [
     #            ComfortInput(f"{self._id}_1", f"{self._name} 1", self),
@@ -120,7 +116,7 @@ class ComfortSystem:
     @property
     def hub_id(self) -> str:
         """ID for dummy hub."""
-        return self._id
+        return self.id
 
     async def test_connection(self) -> bool:
         """Test connectivity to the Dummy hub is OK."""

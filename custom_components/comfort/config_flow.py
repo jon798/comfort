@@ -144,7 +144,7 @@ async def validate_input(hass: HomeAssistant, data: dict) -> dict[Any, Any]:
     print("Timeout:", comfort.comforttimeout)  # noqa: T201
     print("Retry delay:", comfort.retry)  # noqa: T201
     print("Receive buffer size:", comfort.buffer)  # noqa: T201
-    print("System name:", comfort.buffer)  # noqa: T201
+    print("System name:", comfort.name)  # noqa: T201
 
     return {"title": "Comfort Alarm"}
 
