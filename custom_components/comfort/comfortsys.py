@@ -68,6 +68,7 @@ class ComfortSystem:
         # threading.Thread(target=self.worker(), daemon=True).start()
 
     async def readdata(self, comfortsock):
+        self.comfortsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         delim = "\r"
         recv_buffer = 4096
         inputbuffer = ""
