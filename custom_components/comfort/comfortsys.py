@@ -70,7 +70,7 @@ class ComfortSystem:
         recv_buffer = buffer
         data = True
         data = self.comfortsock.recv(recv_buffer).decode()
-        time.sleep(0.5)
+        print("Received:", data, ".")  # noqa: T201
         for i in range(0, 100):
             data = data + self.comfortsock.recv(recv_buffer).decode()
             print(i, ":", data, ".")
