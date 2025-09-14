@@ -66,14 +66,45 @@ class ComfortSystem:
         self.comfortsock.sendall(("\x03LI" + pin + "\r").encode())
         print("Sent:", ("\x03LI" + pin + "\r").encode())
         # threading.Thread(target=self.worker(), daemon=True).start()
+
+    async def readdata(self, comfortsock):
         delim = "\r"
-        recv_buffer = buffer
-        data = True
-        data = self.comfortsock.recv(recv_buffer).decode()
-        print("Received:", data, ".")  # noqa: T201
-        for i in range(0, 100):
-            data = data + self.comfortsock.recv(recv_buffer).decode()
-            print(i, ":", data, ".")
+        recv_buffer = 4096
+        inputbuffer = ""
+        while True:
+            try:
+                data = self.comfortsock.recv(recv_buffer).decode()
+            except socket.timeout as e:
+                err = e.args[0]
+                # this next if/else is a bit redundant, but illustrates how the
+                # timeout exception is setup
+                if err == "timed out":
+                    # sleep(1)
+                    # print ('recv timed out, retry later')
+                    self.comfortsock.sendall(
+                        "\x03cc00\r".encode()
+                    )  # echo command for keepalive
+                    continue
+                else:
+                    print(e)
+            # sys.exit(1)
+            except socket.error as e:
+                # Something else happened, handle error, exit, etc.
+                print(e)
+                raise
+                # sys.exit(1)
+            else:
+                if len(data) == 0:
+                    print("orderly shutdown on server end")
+                # sys.exit(0)
+                else:
+                    # got a message do something :)
+                    inputbuffer += data
+
+                    while inputbuffer.find(delim) != -1:
+                        line, inputbuffer = inputbuffer.split("\r", 1)
+                        print("Received line:", line)  # noqa: T201
+                        yield line
         return
 
     #    self.inputs = [
