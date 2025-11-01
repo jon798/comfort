@@ -66,7 +66,6 @@ class ComfortSystem:
         self.comfortsock.sendall(("\x03LI" + pin + "\r").encode())
         print("Sent:", ("\x03LI" + pin + "\r").encode())
         # threading.Thread(target=self.worker(), daemon=True).start()
-        self.readlines()
 
     @callback
     def readlines(self):
