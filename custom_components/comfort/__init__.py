@@ -21,11 +21,13 @@ async def async_setup(hass: HomeAssistant, config: dict):
 
     reader, writer = await asyncio.open_connection(host, port)
     _LOGGER.info("Connected to %s:%s", host, port)
+    print("Connected to %s:%s", host, port)
     connections[DOMAIN] = (reader, writer)
 
     async def listen_for_messages():
         """Background task to listen for unsolicited messages from the device."""
         _LOGGER.info("Starting background listener for TCP messages")
+        print("Starting background listener for TCP messages")
         try:
             while True:
                 data = await reader.readline()
@@ -35,6 +37,7 @@ async def async_setup(hass: HomeAssistant, config: dict):
                 message = data.decode(errors="ignore").strip()
                 if message:
                     _LOGGER.debug("Received unsolicited message: %s", message)
+                    print("Received unsolicited message: %s", message)
                     hass.bus.async_fire(f"{DOMAIN}_message", {"message": message})
         except asyncio.CancelledError:
             _LOGGER.info("TCP listener task cancelled")
@@ -64,6 +67,7 @@ async def async_setup(hass: HomeAssistant, config: dict):
             writer.write((message + "\n").encode())
             await writer.drain()
             _LOGGER.debug("Message sent: %s", message)
+            print("Message sent: %s", message)
         except Exception as e:
             _LOGGER.exception("Failed to send message: %s", e)
 
