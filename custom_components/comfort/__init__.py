@@ -2,7 +2,7 @@ import asyncio
 import logging
 from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.core import HomeAssistant, ServiceCall
-from .const import DOMAIN, CONF_HOST, CONF_PORT
+from .const import DOMAIN, CONF_HOST, CONF_PORT, CONF_PIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -18,12 +18,13 @@ async def async_setup(hass: HomeAssistant, config: dict):
 
     host = conf.get(CONF_HOST)
     port = conf.get(CONF_PORT)
+    pin = conf.get(CONF_PIN)
 
     reader, writer = await asyncio.open_connection(host, port)
     _LOGGER.info("Connected to %s:%s", host, port)
     print("Connected to %s:%s", host, port)
     connections[DOMAIN] = (reader, writer)
-    writer.write(("\x03LI6014\r").encode())
+    writer.write(("\x03LI" + pin + "\r").encode())
     print("Sent login")
 
     async def listen_for_messages():
@@ -38,8 +39,8 @@ async def async_setup(hass: HomeAssistant, config: dict):
                     break
                 message = data.decode(errors="ignore").strip()
                 if message:
-                    _LOGGER.debug("Received unsolicited message: %s", message)
-                    print("Received unsolicited message: %s", message)
+                    _LOGGER.debug("Received unsolicited message: ", message)
+                    print("Received unsolicited message: ", message)
                     hass.bus.async_fire(f"{DOMAIN}_message", {"message": message})
         except asyncio.CancelledError:
             _LOGGER.info("TCP listener task cancelled")

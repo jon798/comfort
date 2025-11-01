@@ -9,8 +9,7 @@ import voluptuous as vol
 from homeassistant import config_entries, exceptions
 from homeassistant.helpers import selector
 
-from .comfortsys import ComfortSystem
-from .const import DOMAIN  # pylint:disable=unused-import
+from .archive.const import DOMAIN  # pylint:disable=unused-import
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
@@ -104,20 +103,20 @@ async def validate_input(hass: HomeAssistant, data: dict) -> dict[Any, Any]:
     if len(data["Comfort IP Address"]) < 3:
         raise InvalidHost
 
-    comfort = ComfortSystem(
-        hass,
-        data["Login PIN"],
-        data["Comfort IP Address"],
-        int(data["Comfort TCP Port"]),
-        int(data["Comfort Timeout"]),
-        int(data["Retry Interval"]),
-        int(data["Receive Buffer Size"]),
-        data["System Name"],
-    )
-    # The dummy hub provides a `test_connection` method to ensure it's working
-    # as expected
-    result = await comfort.test_connection()
-    if not result:
+        # comfort = ComfortSystem(
+        #     hass,
+        #     data["Login PIN"],
+        #     data["Comfort IP Address"],
+        #     int(data["Comfort TCP Port"]),
+        #     int(data["Comfort Timeout"]),
+        #     int(data["Retry Interval"]),
+        #     int(data["Receive Buffer Size"]),
+        #     data["System Name"],
+        # )
+        # The dummy hub provides a `test_connection` method to ensure it's working
+        # as expected
+        # result = await comfort.test_connection()
+        # if not result:
         # If there is an error, raise an exception to notify HA that there was a
         # problem. The UI will also show there was a problem
         raise CannotConnect
@@ -150,7 +149,7 @@ async def validate_input(hass: HomeAssistant, data: dict) -> dict[Any, Any]:
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    """Handle a config flow for Hello World."""
+    """Handle a config flow for Comfort Integration."""
 
     VERSION = 1
     # Pick one of the available connection classes in homeassistant/config_entries.py

@@ -11,8 +11,5 @@ logger:
   logs:
     custom_components.integration_blueprint: debug
 
-comfort:
-  host: 192.168.4.205
-  port: 1001
-  pin: 6014
+
 
