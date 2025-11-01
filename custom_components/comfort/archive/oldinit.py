@@ -1,0 +1,57 @@
+"""
+Comfort alarm integration with Home Assistant, based on blueprint from @ludeeus.
+
+For more details about this integration, please refer to
+https://github.com/ludeeus/integration_blueprint
+"""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import Platform
+
+from .comfortsys import ComfortSystem
+
+if TYPE_CHECKING:
+    from homeassistant.core import HomeAssistant
+
+# List of platforms to support. There should be a matching .py file for each,
+# eg <cover.py> and <sensor.py>
+PLATFORMS = [Platform.BINARY_SENSOR]
+
+
+type ComfortConfigEntry = ConfigEntry[ComfortSystem]
+
+
+async def async_setup_entry(hass: HomeAssistant, entry: ComfortConfigEntry) -> bool:
+    """Set up Hello World from a config entry."""
+    # Store an instance of the "connecting" class that does the work of speaking
+    # with your actual devices.
+    print("I think this is what calls comfortsystem.")
+    entry.runtime_data = ComfortSystem(
+        hass,
+        entry.data["Login PIN"],
+        entry.data["Comfort IP Address"],
+        entry.data["Comfort TCP Port"],
+        entry.data["Comfort Timeout"],
+        entry.data["Retry Interval"],
+        entry.data["Receive Buffer Size"],
+        entry.data["System Name"],
+    )
+
+    # This creates each HA object for each platform your device requires.
+    # It's done by calling the `async_setup_entry` function in each platform module.
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    return True
+
+
+async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    """Unload a config entry."""
+    # This is called when an entry/configured device is to be removed. The class
+    # needs to unload itself, and remove callbacks. See the classes for further
+    # details
+    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    # a random comment to recheck
+    return unload_ok

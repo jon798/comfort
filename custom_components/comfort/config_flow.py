@@ -11,6 +11,9 @@ from homeassistant.helpers import selector
 
 from .archive.const import DOMAIN  # pylint:disable=unused-import
 
+from comfortsys import ComfortSystem
+
+
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
 
@@ -103,23 +106,23 @@ async def validate_input(hass: HomeAssistant, data: dict) -> dict[Any, Any]:
     if len(data["Comfort IP Address"]) < 3:
         raise InvalidHost
 
-        # comfort = ComfortSystem(
-        #     hass,
-        #     data["Login PIN"],
-        #     data["Comfort IP Address"],
-        #     int(data["Comfort TCP Port"]),
-        #     int(data["Comfort Timeout"]),
-        #     int(data["Retry Interval"]),
-        #     int(data["Receive Buffer Size"]),
-        #     data["System Name"],
-        # )
-        # The dummy hub provides a `test_connection` method to ensure it's working
-        # as expected
-        # result = await comfort.test_connection()
-        # if not result:
-        # If there is an error, raise an exception to notify HA that there was a
-        # problem. The UI will also show there was a problem
-        raise CannotConnect
+    comfort = ComfortSystem(
+        hass,
+        data["host"],
+        data["port"],
+        data["pin"],
+        data["Comfort Timeout"],
+        data["Retry Interval"],
+        data["Receive Buffer Size"],
+        data["System Name"],
+    )
+    # The dummy hub provides a `test_connection` method to ensure it's working
+    # as expected
+    # result = await comfort.test_connection()
+    # if not result:
+    # If there is an error, raise an exception to notify HA that there was a
+    # problem. The UI will also show there was a problem
+    # raise CannotConnect
 
     # If your PyPI package is not built with async, pass your methods
     # to the executor:

@@ -14,17 +14,20 @@ import asyncio
 import time
 import threading
 import queue
+import logging
 
-from homeassistant.core import callback
+_LOGGER = logging.getLogger(__name__)
+
+from .const import DOMAIN
 
 from typing import TYPE_CHECKING, Callable
-
-from sqlalchemy import true
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
 
 q = queue.SimpleQueue()
+
+connections = {}
 
 
 class ComfortSystem:
@@ -32,93 +35,96 @@ class ComfortSystem:
 
     manufacturer = "Cytech"
 
-    def __init__(
-        self,
-        hass: HomeAssistant,
-        pin: str,
-        ip: str,
-        port: int,
-        comforttimeout: int,
-        retry: int,
-        buffer: int,
-        name: str,
-    ) -> None:
-        """Init Comfort Alarm."""
-        self._hass = hass
-        self.name = name
-        self.pin = pin
-        self.ip = ip
-        self.port = int(port)
-        self.comforttimeout = int(comforttimeout)
-        self.retry = int(retry)
-        self.buffer = int(buffer)
-        self.id = name.lower()
-        # Create the devices that are part of this hub.
-        # In a real implementation, this would query the hub to find the devices.
 
-    #    self.inputs = [
-    #            ComfortInput(f"{self._id}_1", f"{self._name} 1", self),
-    #            ComfortInput(f"{self._id}_2", f"{self._name} 2", self),
-    #            ComfortInput(f"{self._id}_3", f"{self._name} 3", self),
+async def __init__(
+    self,
+    hass: HomeAssistant,
+    pin: str,
+    ip: str,
+    port: int,
+    comforttimeout: int,
+    retry: int,
+    buffer: int,
+    name: str,
+) -> None:
+    """Init Comfort Alarm."""
+    self.hass = hass
+    self.name = name
+    self.pin = pin
+    self.ip = ip
+    self.port = int(port)
+    self.comforttimeout = int(comforttimeout)
+    self.retry = int(retry)
+    self.buffer = int(buffer)
+    self.id = name.lower()
+    # Create the devices that are part of this hub.
+    # In a real implementation, this would query the hub to find the devices.
 
-    #       self.others = []  # type: list[ComfortInput]
-    #       self.online = True
+    reader, writer = await asyncio.open_connection(name, port)
+    _LOGGER.info("Connected to %s:%s", name, port)
+    print("Connected to %s:%s", name, port)
+    connections[DOMAIN] = (reader, writer)
+    writer.write(("\x03LI" + pin + "\r").encode())
+    print("Sent login")
 
-    @property
-    def hub_id(self) -> str:
-        """ID for dummy hub."""
-        return self.id
+    async def listen_for_messages():
+        """Background task to listen for unsolicited messages from the device."""
+        _LOGGER.info("Starting background listener for TCP messages")
+        print("Starting background listener for TCP messages")
+        try:
+            while True:
+                data = await reader.readuntil(b"\r")
+                if not data:
+                    _LOGGER.warning("TCP connection closed by remote host")
+                    break
+                message = data.decode(errors="ignore").strip()
+                if message:
+                    _LOGGER.debug("Received unsolicited message: ", message)
+                    print("Received unsolicited message: ", message)
+                    hass.bus.async_fire(f"{DOMAIN}_message", {"message": message})
+        except asyncio.CancelledError:
+            _LOGGER.info("TCP listener task cancelled")
+        except Exception as e:
+            _LOGGER.exception("Error in TCP listener: %s", e)
+        finally:
+            writer.close()
+            await writer.wait_closed()
+            _LOGGER.info("TCP connection closed")
 
-    async def test_connection(self) -> bool:
-        """Test connectivity to the Dummy hub is OK."""
-        await asyncio.sleep(1)
-        return True
+    listener_task = hass.loop.create_task(listen_for_messages())
 
+    async def handle_send_message(call: ServiceCall):
+        """Send a message to the TCP server."""
+        message = call.data.get("message")
+        if not message:
+            _LOGGER.warning("No message provided in service call")
+            return
 
-class ComfortInput:
-    """Comfort Input device."""
+        reader_writer = connections.get(DOMAIN)
+        if not reader_writer:
+            _LOGGER.error("No active TCP connection")
+            return
 
-    def __init__(self, inputid: str, name: str, comfort: ComfortSystem) -> None:
-        """Init Comfort Input."""
-        self._id = inputid
-        self.hub = comfort
-        self.name = name
-        self._callbacks = set()
-        self._loop = asyncio.get_event_loop()
+        _, writer = reader_writer
+        try:
+            writer.write((message + "\n").encode())
+            await writer.drain()
+            _LOGGER.debug("Message sent: %s", message)
+            print("Message sent: %s", message)
+        except Exception as e:
+            _LOGGER.exception("Failed to send message: %s", e)
 
-        # Some static information about this device
-        self.model = "PIR Input"
+    hass.services.async_register(DOMAIN, "send_message", handle_send_message)
 
-    @property
-    def input_id(self) -> str:
-        """Return ID for input."""
-        return self._id
+    async def stop_connection(event):
+        """Stop background listener and close connection when HA stops."""
+        _LOGGER.info("Shutting down TCP integration")
+        listener_task.cancel()
+        try:
+            await listener_task
+        except asyncio.CancelledError:
+            pass
+            writer.close()
+            await writer.wait_closed()
 
-    async def delayed_update(self) -> None:
-        """Publish updates, with a random delay to emulate interaction with device."""
-        await asyncio.sleep(random.randint(1, 10))
-        await self.publish_updates()
-
-    def register_callback(self, callback: Callable[[], None]) -> None:
-        """Register callback, called when input changes state."""
-        self._callbacks.add(callback)
-
-    def remove_callback(self, callback: Callable[[], None]) -> None:
-        """Remove previously registered callback."""
-        self._callbacks.discard(callback)
-
-    # In a real implementation, this library would call it's call backs when it was
-    # notified of any state changes for the relevant device.
-    async def publish_updates(self) -> None:
-        """Schedule call all registered callbacks."""
-        # self._current_position = self._target_position
-        for callback in self._callbacks:
-            callback()
-
-
-class ComfortLUUserLoggedIn(object):
-    def __init__(self, datastr="", user=0):
-        if datastr:
-            self.user = int(datastr[2:4], 16)
-        else:
-            self.user = int(user)
+    hass.bus.async_listen_once("homeassistant_stop", stop_connection)
