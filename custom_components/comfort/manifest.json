@@ -4,7 +4,7 @@
   "codeowners": [
     "@jon798"
   ],
-  "config_flow": true,
+  "config_flow": false,
   "documentation": "https://github.com/jon798/comfort",
   "iot_class": "local_push",
   "issue_tracker": "https://github.com/jon798/comfort/issues",
