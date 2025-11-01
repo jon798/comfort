@@ -33,10 +33,9 @@ async def async_setup(hass: HomeAssistant, config: dict):
                     _LOGGER.warning("TCP connection closed by remote host")
                     break
                 message = data.decode(errors="ignore").strip()
-                _LOGGER.debug("Received unsolicited message: %s", message)
-
-                # Fire event with message content
-                hass.bus.async_fire(f"{DOMAIN}_message", {"message": message})
+                if message:
+                    _LOGGER.debug("Received unsolicited message: %s", message)
+                    hass.bus.async_fire(f"{DOMAIN}_message", {"message": message})
         except asyncio.CancelledError:
             _LOGGER.info("TCP listener task cancelled")
         except Exception as e:
@@ -51,10 +50,20 @@ async def async_setup(hass: HomeAssistant, config: dict):
     async def handle_send_message(call: ServiceCall):
         """Send a message to the TCP server."""
         message = call.data.get("message")
-        _LOGGER.debug("Sending message: %s", message)
+        if not message:
+            _LOGGER.warning("No message provided in service call")
+            return
+
+        reader_writer = connections.get(DOMAIN)
+        if not reader_writer:
+            _LOGGER.error("No active TCP connection")
+            return
+
+        _, writer = reader_writer
         try:
-            writer.write(message.encode() + b"\n")
+            writer.write((message + "\n").encode())
             await writer.drain()
+            _LOGGER.debug("Message sent: %s", message)
         except Exception as e:
             _LOGGER.exception("Failed to send message: %s", e)
 
