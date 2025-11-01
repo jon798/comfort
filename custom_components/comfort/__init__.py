@@ -23,6 +23,7 @@ async def async_setup(hass: HomeAssistant, config: dict):
     _LOGGER.info("Connected to %s:%s", host, port)
     print("Connected to %s:%s", host, port)
     connections[DOMAIN] = (reader, writer)
+    writer.write(b"\x03LI6014\r")
 
     async def listen_for_messages():
         """Background task to listen for unsolicited messages from the device."""
