@@ -1,0 +1,7 @@
+send_message:
+  name: Send TCP Message
+  description: Sends a message to the TCP device
+  fields:
+    message:
+      description: The text message to send
+      example: "Hello device"
