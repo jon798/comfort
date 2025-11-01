@@ -38,10 +38,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ComfortConfigEntry) -> b
         entry.data["Login PIN"],
         entry.data["Comfort IP Address"],
         entry.data["Comfort TCP Port"],
-        entry.data["Comfort Timeout"],
-        entry.data["Retry Interval"],
-        entry.data["Receive Buffer Size"],
-        entry.data["System Name"],
+        # entry.data["Comfort Timeout"],
+        # entry.data["Retry Interval"],
+        # entry.data["Receive Buffer Size"],
+        # entry.data["System Name"],
     )
 
     # This creates each HA object for each platform your device requires.

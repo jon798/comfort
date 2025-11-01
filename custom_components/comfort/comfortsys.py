@@ -22,8 +22,6 @@ from homeassistant.core import callback
 
 from typing import TYPE_CHECKING, Callable
 
-from sqlalchemy import true
-
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
 
@@ -41,21 +39,21 @@ class ComfortSystem:
         pin: str,
         ip: str,
         port: int,
-        comforttimeout: int,
-        retry: int,
-        buffer: int,
-        name: str,
+        # comforttimeout: int,
+        # retry: int,
+        # buffer: int,
+        # name: str,
     ) -> None:
         """Init Comfort Alarm."""
-        self._hass = hass
-        self.name = name
+        self.hass = hass
+        # self.name = name
         self.pin = pin
         self.ip = ip
         self.port = int(port)
-        self.comforttimeout = int(comforttimeout)
-        self.retry = int(retry)
-        self.buffer = int(buffer)
-        self.id = name.lower()
+        # self.comforttimeout = int(comforttimeout)
+        # self.retry = int(retry)
+        # self.buffer = int(buffer)
+        # self.id = name.lower()
         # Create the devices that are part of this hub.
         # In a real implementation, this would query the hub to find the devices.
         print("connecting to " + ip + " on port " + str(int(port)))
