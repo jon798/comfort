@@ -15,6 +15,8 @@ import time
 import threading
 import queue
 
+from homeassistant.core import callback
+
 from typing import TYPE_CHECKING, Callable
 
 from sqlalchemy import true
@@ -65,6 +67,7 @@ class ComfortSystem:
         print("Sent:", ("\x03LI" + pin + "\r").encode())
         # threading.Thread(target=self.worker(), daemon=True).start()
 
+    @callback
     async def readlines(self):
         print("Is this function ever getting called? How do I do that?")
         self.comfortsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
