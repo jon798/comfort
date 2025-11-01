@@ -13,6 +13,9 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 
 from .comfortsys import ComfortSystem
+import logging
+
+_LOGGER = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
