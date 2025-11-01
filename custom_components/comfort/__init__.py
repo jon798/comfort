@@ -9,8 +9,6 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup(hass: HomeAssistant, config: dict):
     """Set up the comfort integration."""
-    # You can define this in configuration.yaml (see below)
-    conf = config.get(DOMAIN, {})
     host = "192.168.4.205"
     port = 1001
     pin = "6014"

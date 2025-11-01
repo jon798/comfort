@@ -17,7 +17,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from . import ComfortConfigEntry
+from .. import ComfortConfigEntry
 from .const import DOMAIN
 
 

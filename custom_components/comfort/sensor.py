@@ -3,7 +3,7 @@ from homeassistant.helpers.entity import Entity
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Set up the sensor platform."""
-    sensor = SocketClientSensor()
+    sensor = ComfortSensor()
     async_add_entities([sensor])
 
     async def handle_message(event):
@@ -14,7 +14,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     hass.bus.async_listen("socket_client_message", handle_message)
 
 
-class SocketClientSensor(Entity):
+class ComfortSensor(Entity):
     """Representation of a socket client sensor."""
 
     def __init__(self):
