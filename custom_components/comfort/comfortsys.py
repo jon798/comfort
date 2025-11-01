@@ -56,7 +56,7 @@ class ComfortSystem:
         # Create the devices that are part of this hub.
         # In a real implementation, this would query the hub to find the devices.
         self.comfortsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        print("connecting to " + ip + " " + str(int(port)))
+        print("connecting to " + ip + " on port " + str(int(port)))
         try:
             self.comfortsock.connect((ip, int(port)))
         except Exception as e:
