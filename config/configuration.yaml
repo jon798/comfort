@@ -11,3 +11,4 @@ logger:
   logs:
     custom_components.integration_blueprint: debug
 
+comfort:
