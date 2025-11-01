@@ -52,5 +52,5 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # needs to unload itself, and remove callbacks. See the classes for further
     # details
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
-    # a random comment to check committing works
+    # a random comment to recheck
     return unload_ok
