@@ -14,4 +14,5 @@ logger:
 comfort:
   host: 192.168.4.205
   port: 1001
+  pin: 6014
 

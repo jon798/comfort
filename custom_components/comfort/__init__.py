@@ -32,7 +32,7 @@ async def async_setup(hass: HomeAssistant, config: dict):
         print("Starting background listener for TCP messages")
         try:
             while True:
-                data = await reader.readline()
+                data = await reader.readuntil(b"\r")
                 if not data:
                     _LOGGER.warning("TCP connection closed by remote host")
                     break
