@@ -27,7 +27,7 @@ class ComfortConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     ),
                 ),
                 vol.Required(
-                    "Comfort IP Address",
+                    CONF_HOST,
                     default=("192.168.4.205"),
                 ): selector.TextSelector(
                     selector.TextSelectorConfig(
