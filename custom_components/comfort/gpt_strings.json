@@ -1,0 +1,16 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "Connect to Comfort alarm system",
+                "description": "Enter the IP address and port of your Comfort UCM Module.",
+                "data": {
+                    "host": "Host IP",
+                    "port": "Port"
+                }
+            }
+        },
+        "error": {},
+        "abort": {}
+    }
+}

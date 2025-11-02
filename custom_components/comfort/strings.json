@@ -1,0 +1,16 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "Connect to TCP Device",
+                "description": "Enter the IP address and port of your TCP device.",
+                "data": {
+                    "host": "Host IP",
+                    "port": "Port"
+                }
+            }
+        },
+        "error": {},
+        "abort": {}
+    }
+}

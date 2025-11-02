@@ -1,5 +1,5 @@
-DOMAIN = "comfort"
+DOMAIN = "my_tcp_integration"
 CONF_HOST = "host"
 CONF_PORT = "port"
-DEFAULT_PORT = 1001
+DEFAULT_PORT = 5555
 EVENT_MESSAGE = f"{DOMAIN}_message"

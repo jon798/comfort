@@ -18,7 +18,7 @@ import logging
 
 _LOGGER = logging.getLogger(__name__)
 
-from .const import DOMAIN
+from .zconst import DOMAIN
 
 from typing import TYPE_CHECKING, Callable
 
