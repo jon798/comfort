@@ -71,14 +71,16 @@ class TCPClient:
         """Connect and start listening."""
         while not self._stopping:
             try:
+                self.listener_task = asyncio.create_task(self.listen())
+
                 _LOGGER.info("Connecting to %s:%s", self.host, self.port)
                 self.reader, self.writer = await asyncio.open_connection(
                     self.host, self.port
                 )
                 _LOGGER.info("Connected to %s:%s", self.host, self.port)
+
                 self.writer.write(("\x03LI" + self.pin + "\r").encode())
                 _LOGGER.info("Sent login: " + "\x03LI" + self.pin + "\r")  # noqa: G003
-                self.listener_task = asyncio.create_task(self.listen())
 
                 # get security mode
                 self.writer.write("\x03M?\r)".encode())
