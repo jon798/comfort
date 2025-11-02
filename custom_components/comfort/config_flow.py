@@ -1,8 +1,17 @@
 from homeassistant import config_entries
 import voluptuous as vol
-from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.helpers import selector
-from .const import DOMAIN, DEFAULT_PORT
+from .const import (
+    CONF_BUFFER_SIZE,
+    CONF_PIN,
+    CONF_SYSTEM_NAME,
+    CONF_TIMEOUT,
+    CONF_RETRY_INTERVAL,
+    CONF_HOST,
+    CONF_PORT,
+    DOMAIN,
+    DEFAULT_PORT,
+)
 
 
 class ComfortConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -19,7 +28,7 @@ class ComfortConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         schema = vol.Schema(
             {
                 vol.Required(
-                    "Login PIN",
+                    CONF_PIN,
                     default=("6014"),
                 ): selector.TextSelector(
                     selector.TextSelectorConfig(
@@ -35,7 +44,7 @@ class ComfortConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     ),
                 ),
                 vol.Required(
-                    "Comfort TCP Port",
+                    CONF_PORT,
                     default=(1001),
                 ): selector.NumberSelector(
                     selector.NumberSelectorConfig(
@@ -46,7 +55,7 @@ class ComfortConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     ),
                 ),
                 vol.Required(
-                    "Comfort Timeout",
+                    CONF_TIMEOUT,
                     default=(30),
                 ): selector.NumberSelector(
                     selector.NumberSelectorConfig(
@@ -57,7 +66,7 @@ class ComfortConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     ),
                 ),
                 vol.Required(
-                    "Retry Interval",
+                    CONF_RETRY_INTERVAL,
                     default=(5),
                 ): selector.NumberSelector(
                     selector.NumberSelectorConfig(
@@ -68,7 +77,7 @@ class ComfortConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     ),
                 ),
                 vol.Required(
-                    "Receive Buffer Size",
+                    CONF_BUFFER_SIZE,
                     default=(4096),
                 ): selector.NumberSelector(
                     selector.NumberSelectorConfig(
@@ -79,7 +88,7 @@ class ComfortConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     ),
                 ),
                 vol.Required(
-                    "System Name",
+                    CONF_SYSTEM_NAME,
                     default=("Comfort Alarm"),
                 ): selector.TextSelector(
                     selector.TextSelectorConfig(

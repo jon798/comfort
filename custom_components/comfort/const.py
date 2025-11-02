@@ -1,5 +1,10 @@
 DOMAIN = "comfort"
 CONF_HOST = "host"
 CONF_PORT = "port"
+CONF_PIN = "pin"
+CONF_TIMEOUT = "timeout"
+CONF_RETRY_INTERVAL = "retry_interval"
+CONF_BUFFER_SIZE = "buffer_size"
+CONF_SYSTEM_NAME = "system_name"
 DEFAULT_PORT = 1001
 EVENT_MESSAGE = f"{DOMAIN}_message"
