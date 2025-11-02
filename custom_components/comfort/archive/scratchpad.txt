@@ -145,3 +145,47 @@
                                 print("reset detected")
                                 self.login()
 
+
+
+
+
+
+
+
+
+
+2025-11-02 13:59:34 DEBUG    LU04
+2025-11-02 13:59:34 INFO     Comfort Login Ok - User 4
+2025-11-02 13:59:34 DEBUG    Subscribed to 8 Zone Outputs
+2025-11-02 13:59:34 DEBUG    Subscribed to 16 Zone Inputs
+2025-11-02 13:59:34 DEBUG    Not Subscribed to any RIO Inputs
+2025-11-02 13:59:34 DEBUG    Not Subscribed to any RIO Outputs
+2025-11-02 13:59:34 DEBUG    Subscribed to 254 Flags
+2025-11-02 13:59:34 DEBUG    Subscribed to 32 Sensors
+2025-11-02 13:59:34 DEBUG    Subscribed to 255 Counters
+2025-11-02 13:59:34 DEBUG    Not Subscribed to any Responses
+2025-11-02 13:59:34 DEBUG    Synchronizing Comfort Data...
+2025-11-02 13:59:34 DEBUG    Synchronization Done.
+2025-11-02 13:59:35 INFO     Setting Comfort Date/Time
+2025-11-02 13:59:38 DEBUG    OK
+2025-11-02 13:59:38 DEBUG    b?00000000000000000000000000
+2025-11-02 13:59:38 DEBUG    Zones Bypassed: 0
+2025-11-02 13:59:38 DEBUG    V?FE080D22400100
+2025-11-02 13:59:39 INFO     Comfort II ULTRA detected (Supported Firmware 8.013)
+2025-11-02 13:59:39 DEBUG    EL11F1FFFFFFFF
+2025-11-02 13:59:39 DEBUG    1 Installed SEM(s) detected
+2025-11-02 13:59:39 DEBUG    Hardware Model CM9000-ULT
+2025-11-02 13:59:41 DEBUG    DL7FF9040001010082
+2025-11-02 13:59:41 DEBUG    SN0101010000
+2025-11-02 13:59:41 INFO     Refresh Key: 01010000
+2025-11-02 13:59:41 INFO     Serial Number: Invalid
+2025-11-02 13:59:42 DEBUG    M?0004
+2025-11-02 13:59:42 INFO     Security Off
+2025-11-02 13:59:42 DEBUG    Z?0004
+2025-11-02 13:59:42 DEBUG    Max. Reported Zones/Inputs: 16
+2025-11-02 13:59:42 DEBUG    Y?0000
+2025-11-02 13:59:42 DEBUG    Max. Reported Outputs: 16
+2025-11-02 13:59:42 DEBUG    f?00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+2025-11-02 13:59:45 DEBUG    S?00
+2025-11-02 13:59:45 DEBUG    a?110000000000000000
+2025-11-02 13:59:45 INFO     System Disarmed

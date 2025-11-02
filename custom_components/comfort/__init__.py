@@ -110,6 +110,10 @@ class TCPClient:
                         f"{EVENT_MESSAGE}_update",
                         {"entry_id": self.entry_id, "message": msg},
                     )
+                if msg[1:3] == "Z?":
+                    _LOGGER.info("Number of inputs: " + str((len(msg) - 3) * 4))
+                if msg[1:3] == "LU":
+                    _LOGGER.info("User logged in: " + msg[4:5])
 
         except asyncio.CancelledError:
             pass
