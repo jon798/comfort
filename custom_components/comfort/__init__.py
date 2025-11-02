@@ -82,8 +82,10 @@ class TCPClient:
 
                 # get security mode
                 self.writer.write("\x03M?\r)".encode())
+                _LOGGER.info("Sent get security mode")
                 # get all zone input states
                 self.writer.write("\x03Z?\r".encode())
+                _LOGGER.info("Sent get all input states")
 
                 return  # noqa: TRY300
             except Exception as e:  # noqa: BLE001
@@ -100,7 +102,7 @@ class TCPClient:
                     break
                 msg = data.decode(errors="ignore").strip()
                 if msg:
-                    _LOGGER.debug("Received message: %s", msg)
+                    _LOGGER.info("Received message: %s", msg)
                     # Fire Home Assistant event
                     self.hass.bus.async_fire(EVENT_MESSAGE, {"message": msg})
                     # Notify entities
@@ -108,6 +110,7 @@ class TCPClient:
                         f"{EVENT_MESSAGE}_update",
                         {"entry_id": self.entry_id, "message": msg},
                     )
+
         except asyncio.CancelledError:
             pass
         except Exception as e:
