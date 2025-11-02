@@ -2,7 +2,7 @@ import asyncio
 import logging
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, ServiceCall
-from homeassistant.const import CONF_HOST, CONF_PORT
+from homeassistant.const import CONF_HOST, CONF_PORT, CONF_PIN
 from homeassistant.helpers import entity_platform
 from .const import DOMAIN, EVENT_MESSAGE
 
@@ -15,8 +15,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Set up Comfort Integration from a config entry."""
     host = entry.data[CONF_HOST]
     port = entry.data[CONF_PORT]
+    pin = entry.data[CONF_PIN]
 
-    client = TCPClient(hass, host, port, entry.entry_id)
+    client = TCPClient(hass, host, port, pin, entry.entry_id)
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = client
 
     await client.connect()
