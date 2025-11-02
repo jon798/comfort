@@ -105,7 +105,7 @@ class TCPClient:
         except asyncio.CancelledError:
             pass
         except Exception as e:
-            _LOGGER.exception("Error in TCP listener: %s", e)
+            _LOGGER.exception("Error in TCP listener: %s", e)  # noqa: TRY401
         finally:
             await self.schedule_reconnect()
 
@@ -127,7 +127,7 @@ class TCPClient:
             await self.writer.drain()  # type: ignore  # noqa: PGH003
             _LOGGER.debug("Message sent: %s", message)
         except Exception as e:
-            _LOGGER.exception("Failed to send message: %s", e)
+            _LOGGER.exception("Failed to send message: %s", e)  # noqa: TRY401
             await self.schedule_reconnect()
 
     async def stop(self):  # noqa: ANN201
