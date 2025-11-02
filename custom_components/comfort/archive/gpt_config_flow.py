@@ -1,7 +1,7 @@
 from homeassistant import config_entries
 import voluptuous as vol
 from homeassistant.const import CONF_HOST, CONF_PORT
-from .zconst import DOMAIN, DEFAULT_PORT
+from ..zconst import DOMAIN, DEFAULT_PORT
 
 
 class MyTCPConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):

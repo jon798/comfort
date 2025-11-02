@@ -1,7 +1,7 @@
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.const import CONF_HOST
 from homeassistant.core import callback
-from .zconst import DOMAIN, EVENT_MESSAGE
+from ..zconst import DOMAIN, EVENT_MESSAGE
 
 
 async def async_setup_entry(hass, entry, async_add_entities):

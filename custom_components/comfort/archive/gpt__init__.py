@@ -4,7 +4,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.helpers import entity_platform
-from .zconst import DOMAIN, EVENT_MESSAGE
+from ..zconst import DOMAIN, EVENT_MESSAGE
 
 _LOGGER = logging.getLogger(__name__)
 
