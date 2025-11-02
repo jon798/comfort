@@ -79,6 +79,12 @@ class TCPClient:
                 self.writer.write(("\x03LI" + self.pin + "\r").encode())
                 _LOGGER.info("Sent login: " + "\x03LI" + self.pin + "\r")  # noqa: G003
                 self.listener_task = asyncio.create_task(self.listen())
+
+                # get security mode
+                self.writer.write("\x03M?\r)".encode())
+                # get all zone input states
+                self.writer.write("\x03Z?\r".encode())
+
                 return  # noqa: TRY300
             except Exception as e:  # noqa: BLE001
                 _LOGGER.warning("Connection failed: %s. Retrying in 5s...", e)
