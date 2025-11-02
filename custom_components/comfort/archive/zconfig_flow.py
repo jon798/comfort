@@ -9,9 +9,9 @@ import voluptuous as vol
 from homeassistant import config_entries, exceptions
 from homeassistant.helpers import selector
 
-from .archive.const import DOMAIN  # pylint:disable=unused-import
+from .const import DOMAIN  # pylint:disable=unused-import
 
-from custom_components.comfort.zcomfortsys import ComfortSystem
+from custom_components.comfort.archive.zcomfortsys import ComfortSystem
 
 
 if TYPE_CHECKING:

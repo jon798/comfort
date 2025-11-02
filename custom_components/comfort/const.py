@@ -1,4 +1,4 @@
-DOMAIN = "comfort"
+DOMAIN = "comfort"  # noqa: D100
 CONF_HOST = "host"
 CONF_PORT = "port"
 CONF_PIN = "pin"

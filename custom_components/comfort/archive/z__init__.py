@@ -5,7 +5,7 @@ import logging
 from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
-from .zconst import DOMAIN
+from ..zconst import DOMAIN
 from .zcomfortsys import ComfortSystem
 
 from .z__init__ import comfort
