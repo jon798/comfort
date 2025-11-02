@@ -54,7 +54,7 @@ class TCPClient:
     def __init__(self, hass: HomeAssistant, host: str, port: int, entry_id: str):
         self.hass = hass
         self.host = host
-        self.port = port
+        self.port = int(port)
         self.entry_id = entry_id
         self.reader = None
         self.writer = None
