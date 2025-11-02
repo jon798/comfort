@@ -2,7 +2,7 @@ from homeassistant import config_entries
 import voluptuous as vol
 from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.helpers import selector
-from .zconst import DOMAIN, DEFAULT_PORT
+from .const import DOMAIN, DEFAULT_PORT
 
 
 class ComfortConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
