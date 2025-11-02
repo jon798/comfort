@@ -1,4 +1,4 @@
-from homeassistant.components.sensor import SensorEntity  # noqa: D100
+from homeassistant.components.binary_sensor import BinarySensorEntity  # noqa: D100
 from homeassistant.const import CONF_HOST
 from homeassistant.core import callback
 
