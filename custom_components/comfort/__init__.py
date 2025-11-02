@@ -51,10 +51,13 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
 class TCPClient:
     """Persistent TCP connection with listener, reconnect, and event firing."""
 
-    def __init__(self, hass: HomeAssistant, host: str, port: int, entry_id: str):
+    def __init__(
+        self, hass: HomeAssistant, host: str, port: int, pin: str, entry_id: str
+    ):
         self.hass = hass
         self.host = host
         self.port = int(port)
+        self.pin = pin
         self.entry_id = entry_id
         self.reader = None
         self.writer = None
@@ -70,6 +73,8 @@ class TCPClient:
                     self.host, self.port
                 )
                 _LOGGER.info("Connected to %s:%s", self.host, self.port)
+                self.writer.write(("\x03LI" + self.pin + "\r").encode())
+                _LOGGER.info("Sent login: " + "\x03LI" + self.pin + "\r")
                 self.listener_task = asyncio.create_task(self.listen())
                 return
             except Exception as e:

@@ -23,7 +23,9 @@ class ComfortConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
 
         if user_input is not None:
-            return self.async_create_entry(title=user_input[CONF_HOST], data=user_input)
+            return self.async_create_entry(
+                title=user_input[CONF_SYSTEM_NAME], data=user_input
+            )
 
         schema = vol.Schema(
             {
